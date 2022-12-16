@@ -6,7 +6,12 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:lpda-filters": "ng build lpda-filters",
+    "build:web-component": "npm run build:lpda-filters && rm -rf dist/lpda-wrapper && npm run build:web-component:compile && npm run build:web-component:concat && npm run build:web-component-folder",
+    "build:web-component:compile": "ng run lpda-wrapper:build:production --main='projects/lpda-wrapper/src/app/compile.ts'",
+    "build:web-component:concat": "cat dist/lpda-wrapper/runtime.*.js dist/lpda-wrapper/main.*.js > dist/lpda-wrapper/lpda-filters.js",
+    "build:web-component-folder": "cp dist/lpda-wrapper/lpda-filters.js ./demo-component && cp -r src/assets/ ./demo-component/assets/"
   },
   "private": true,
   "dependencies": {
@@ -14,9 +19,10 @@
     "@angular/common": "~13.1.0",
     "@angular/compiler": "~13.1.0",
     "@angular/core": "~13.1.0",
+    "@angular/elements": "^15.0.4",
     "@angular/forms": "~13.1.0",
     "@angular/platform-browser": "~13.1.0",
-    "@angular/platform-browser-dynamic": "~13.1.0",
+    "@angular/platform-browser-dynamic": "^13.1.3",
     "@angular/router": "~13.1.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
@@ -34,6 +40,7 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "ng-packagr": "^13.0.0",
     "typescript": "~4.5.2"
   }
 }
