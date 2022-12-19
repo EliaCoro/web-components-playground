@@ -1,3 +1,38 @@
-<ng-container *ngFor="let datum of data">
-  <lib-menu-card (onClick)="selectedChanged()" [menu]="datum" ></lib-menu-card>
-</ng-container>
+<h1>Scarica menu</h1>
+
+<p class="text-muted">Seleziona i menù da esportare.</p>
+
+<div class="d-flex align-items-center p-2 rounded mb-3">
+  <input #checkbox (change)="allMenusSelectedChanged(!allMenusSelected)" id="download_all" type="checkbox">
+
+  <label for="download_all" class="d-flex align-items-center mb-0 ml-1">
+    <span style="font-size: 1.15em; font-weight: bold;" class="mr-1">
+      Tutti i menù
+    </span>
+
+    <span *ngIf="!allMenusSelected" class="d-flex align-items-center">
+      <span>{{selected.length}}</span>
+      <span>/</span>
+      <span title="100%" class="text-success">{{data.length}}</span>
+    </span>
+  </label>
+</div>
+
+<div class="expandable" [ngClass]="{'expanded': !allMenusSelected}">
+  <ng-container *ngFor="let datum of data">
+    <lib-menu-card (onClick)="selectedChanged()" [menu]="datum"></lib-menu-card>
+  </ng-container>
+</div>
+
+<div class="d-flex flex-row">
+
+  <button (click)="download.emit(selected)" class="btn btn-primary d-flex align-items-center mr-2">
+    <i class="fas fa-fw fa-file-download mr-1"></i>
+    <ng-container i18n>Scarica</ng-container>
+  </button>
+
+  <button (click)="cancel.emit()" class="btn btn-outline-secondary d-flex align-items-center">
+    <i class="fas fa-fw fa-times mr-1"></i>
+    <ng-container i18n>Annulla</ng-container>
+  </button>
+</div>

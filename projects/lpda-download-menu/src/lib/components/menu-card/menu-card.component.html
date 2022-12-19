@@ -1,3 +1,6 @@
 <ng-container *ngIf="menu">
-  <p>{{menu.name}}</p>
+  <div style="display: flex; align-items: center; margin: 1em auto;">
+    <i [ngStyle]="{'visibility': selected ? 'visible' : 'hidden'}" class="fas fa-fw fa-check-circle text-success" ></i>
+    <span style="font-size: 1.25em; font-weight: bold;" >{{menu.name}}</span>
+  </div>
 </ng-container>

@@ -283,7 +283,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/lpda-download-menu/ng-package.json"
+            "project": "projects/lpda-download-menu/ng-package.json",
           },
           "configurations": {
             "production": {

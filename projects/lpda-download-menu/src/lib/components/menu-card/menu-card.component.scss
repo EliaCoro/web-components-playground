@@ -5,6 +5,7 @@
   --border-color: #e0e0e0;
   --border-style: solid;
   --border-radius: 5px;
+  --padding: 10px;
 
   --border-selected-size: 1px;
   --border-selected-color: lightblue;
@@ -16,6 +17,10 @@
 
   display: block;
   border: var(--border-size) var(--border-style) var(--border-color);
+
+  padding: var(--padding);
+
+  cursor: pointer;
 
   &.selected{
     background-color: #f5f5f5;
