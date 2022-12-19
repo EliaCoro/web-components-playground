@@ -1,0 +1,16 @@
+
+<div class="row">
+  <div class="col col-12 col-md-6 col-lg-4 col-xl-3 " *ngFor="let entry of entries">
+    <a tuiAction class="m-2 text-center d-block noicon" [routerLink]="entry.path">
+      <h5 class="m-0">{{entry.title}}</h5>
+      ({{entry.path}})
+
+      <p class="text-center my-2" *ngIf="!entry.imgSrc" >
+        <i *ngIf="entry.faIcon" class="fas fa-fw fa-{{entry.faIcon}} fa-6x"></i>
+        <!-- <mat-icon *ngIf="entry.matIcon" >{{entry.matIcon}}</mat-icon> -->
+      </p>
+
+      <img *ngIf="entry.imgSrc" [src]="entry.imgSrc" >
+    </a>
+  </div>
+</div>

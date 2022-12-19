@@ -10,9 +10,17 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "paths": {
+      "lpda-download-menu": [
+        "dist/lpda-download-menu/lpda-download-menu",
+        "dist/lpda-download-menu"
+      ],
       "lpda-filters": [
         "dist/lpda-filters/lpda-filters",
         "dist/lpda-filters"
+      ],
+      "lpda-orderby": [
+        "dist/lpda-orderby/lpda-orderby",
+        "dist/lpda-orderby"
       ]
     },
     "noFallthroughCasesInSwitch": true,
