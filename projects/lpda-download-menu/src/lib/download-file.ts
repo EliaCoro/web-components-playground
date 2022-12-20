@@ -1,5 +1,8 @@
-import { Category, Dish, Menu } from "./models";
-import * as XLSX from "xlsx";
+import { Allergen, Category, Dish, Ingredient, Media, Menu, Tag } from "./models";
+
+type XLSXWorkSheet = any;
+type XLSXWorkBook = any;
+var XLSX = (window as any).XLSX;
 
 export class DownloadFile {
   static download(data: Menu[], params: { [key: string]: any } = {}): void {
@@ -8,10 +11,14 @@ export class DownloadFile {
 
   private data: Menu[];
   private params: { [key: string]: any } = {};
-  private readonly workbook: XLSX.WorkBook = XLSX.utils.book_new();
+  private readonly workbook: XLSXWorkBook = XLSX.utils.book_new();
 
   get filename(): string {
     return this.params['filename'];
+  }
+
+  get formatImageId(): (image: Media|null|undefined) => string {
+    return this.params['formatImageId'] ?? ((image: Media) => image ? `https://laportadacqua.it/images/${image.id}.${image.extension}` : '');
   }
 
   readonly defaultFilename: string = 'menus';
@@ -28,7 +35,7 @@ export class DownloadFile {
     XLSX.writeFile(this.workbook, `${this.filename || this.defaultFilename}.xlsx`);
   }
 
-  private getWorkSheets(): { [WorksheetName: string]: XLSX.WorkSheet } {
+  private getWorkSheets(): { [WorksheetName: string]: XLSXWorkSheet } {
     return {
       "Tutti i dati": XLSX.utils.json_to_sheet(this.allDataFormatted()),
       "Tutti i menu": XLSX.utils.json_to_sheet(this.formatMenus()),
@@ -115,10 +122,11 @@ export class DownloadFile {
   }
 
   private allDataFormatted(): { [key: string]: any }[] {
-    const columns: string[] = [`Nome (it)`, `Nome (en)`, `Descrizione (it)`, `Descrizione (en)`, `Abilitato?`, `Immagine`, `Prezzo`, `Ingredienti`, `Tag`, `Allergeni`];
-    const rows: {[key: string]: any}[] = [];
-    const addRow = (fieldType: 'Menu'|'Categoria'|'Piatto', values: [any, any, any, any, any, any, any, any, any, any]): void => {
-      const row: {[key: string]: any} = {"Tipologia dato": fieldType};
+    const columns: string[] = [`Nome (it)`, `Nome (en)`, `Descrizione (it)`, `Descrizione (en)`, `Abilitato?`, `Prezzo`];
+    // const columns: string[] = [`Nome (it)`, `Nome (en)`, `Descrizione (it)`, `Descrizione (en)`, `Abilitato?`, `Immagine`, `Prezzo`, `Ingredienti`, `Tag`, `Allergeni`];
+    const rows: { [key: string]: any }[] = [];
+    const addRow = (fieldType: 'Menu' | 'Categoria' | 'Piatto', values: [any, any, any, any, any, any]): void => {
+      const row: { [key: string]: any } = { "Tipologia dato": fieldType };
       values.forEach((value: any, index: number) => {
         row[columns[index]] = value;
       });
@@ -126,11 +134,15 @@ export class DownloadFile {
     }
 
     this.data.forEach((menu: Menu) => {
-      addRow("Menu", [menu.nameIt, menu.nameEn, menu.descriptionIt, menu.descriptionEn, menu.enabled, menu.imageId, menu.price, '', '', '']);
+      addRow("Menu", [menu.nameIt, menu.nameEn, menu.descriptionIt, menu.descriptionEn, menu.enabled == 1 ? `Sì` : `No`, menu.price]);
       menu.categories.forEach((category: Category) => {
-        addRow("Categoria", [category.nameIt, category.nameEn, category.descriptionIt, category.descriptionEn, '', '', '', '', '', '']);
+        addRow("Categoria", [category.nameIt, category.nameEn, category.descriptionIt, category.descriptionEn, category.enabled == 1 ? `Sì` : `No`, '']);
         category.dishes.forEach((dish: Dish) => {
-          addRow("Piatto", [dish.nameIt, dish.nameEn, dish.descriptionIt, dish.descriptionEn, '', '', dish.price, '', '', '']);
+          // const ingredients: string = (dish.ingredients || []).map((i: Ingredient) => i.nameIt).join("\n");
+          // const tags: string = (dish.tags || []).map((t: Tag) => t.nameIt).join("\n");
+          // const allergens: string = (dish.allergens || []).map((a: Allergen) => a.nameIt).join("\n");
+          addRow("Piatto", [dish.nameIt, dish.nameEn, dish.descriptionIt, dish.descriptionEn, dish.enabled == 1 ? `Sì` : `No`, dish.price]);
+          // addRow("Piatto", [dish.nameIt, dish.nameEn, dish.descriptionIt, dish.descriptionEn, dish.enabled == 1 ? `Sì` : `No`, dish.imageId, dish.price, ingredients, tags, allergens]);
         });
       });
     })

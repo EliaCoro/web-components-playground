@@ -1,8 +1,6 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { Menu } from './models';
-import { ActivatedRoute } from '@angular/router';
-import * as XLSX from "xlsx";
 import { DownloadFile } from './download-file';
 
 @Component({
@@ -11,29 +9,16 @@ import { DownloadFile } from './download-file';
   styleUrls: ['./lpda-download-menu.component.scss']
 })
 export class LpdaDownloadMenuComponent {
-
   private readonly defaultFilename: string = 'menus';
 
   @Input() filename: string = this.defaultFilename;
 
   @Output() readonly cancel: EventEmitter<any> = new EventEmitter();
-  @Output() readonly download: EventEmitter<Menu[]> = new EventEmitter<Menu[]>();
   @Output() readonly onSelected: EventEmitter<Menu[]> = new EventEmitter();
+  @Output() readonly downloadSelected: EventEmitter<void> = new EventEmitter();
+  @Input() showTitle: boolean = false;
 
   @ViewChild('checkbox') input?: ElementRef<HTMLInputElement>;
-
-  /**
-   * Should the component generate a file and download it when the download button is clicked?
-   * you may set this to false if you want to handle the download yourself.
-   * @default true
-   * @type {boolean}
-   * @memberof LpdaDownloadMenuComponent
-   * @example
-   * <lpda-download-menu [downloadSelf]="false"></lpda-download-menu>
-   * <lpda-download-menu downloadSelf="false"></lpda-download-menu>
-   * <lpda-download-menu></lpda-download-menu>
-   */
-  @Input() downloadSelf?: boolean = true;
 
   private _allMenusSelected: boolean = true;
   @Input() set allMenusSelected(v: boolean) {
@@ -64,16 +49,22 @@ export class LpdaDownloadMenuComponent {
   @ViewChildren(MenuCardComponent) menuCards?: QueryList<MenuCardComponent>;
 
   constructor() {
-    this.download.subscribe(() => {
-      if (this.downloadSelf) {
-        this.downloadMenus();
-      }
+    this.downloadSelected.subscribe(() => {
+      this.downloadMenus();
     })
   }
 
   ngAfterViewInit(): void {
     this.updateInputStatus();
     this.updateSelectedByAllMenusSelected();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+    if (changes['data']) {
+      this.updateSelectedByAllMenusSelected();
+    }
   }
 
   selectedChanged(): void {
@@ -98,13 +89,15 @@ export class LpdaDownloadMenuComponent {
     this.allMenusSelected ? input?.setAttribute('checked', 'checked') : input?.removeAttribute('checked');
   }
 
-  private updateSelectedByAllMenusSelected(): void {
-    this.menuCards?.forEach((m: MenuCardComponent) => m.updateSelected(this.allMenusSelected));
+  private updateSelectedByAllMenusSelected(overwriteIfFalse: boolean = true): void {
+    if (this.allMenusSelected || overwriteIfFalse) this.menuCards?.forEach((m: MenuCardComponent) => m.updateSelected(this.allMenusSelected));
     this.selectedChanged();
   }
 
   private downloadMenus(): void {
-    this.updateSelectedByAllMenusSelected();
-    DownloadFile.download(this.selected, {filename: this.filename || this.defaultFilename});
+    this.updateSelectedByAllMenusSelected(false);
+    const filename = this.filename || this.defaultFilename;
+    const menuName = this.selected.length == 1 ? this.selected[0].name : undefined;
+    DownloadFile.download(this.selected, {filename: menuName || filename});
   }
 }

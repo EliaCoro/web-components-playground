@@ -7,13 +7,17 @@
   box-sizing: border-box;
   overflow: auto;
 
+  button.btn-primary{
+    width: fit-content;
+  }
+
   .expandable{
     max-height: 0;
     overflow: hidden;
     transition: max-height .5s ease-out;
 
     &.expanded{
-      max-height: 500px;
+      max-height: 300px;
       overflow: auto;
     }
   }

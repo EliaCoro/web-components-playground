@@ -4,11 +4,10 @@ import { CommonModule } from '@angular/common';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { FormsModule } from '@angular/forms';
 
-
 @NgModule({
   declarations: [
     LpdaDownloadMenuComponent,
-    MenuCardComponent
+    MenuCardComponent,
   ],
   imports: [
     CommonModule,
