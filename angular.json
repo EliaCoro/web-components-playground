@@ -236,68 +236,6 @@
           }
         }
       }
-    },
-    "lpda-orderby": {
-      "projectType": "library",
-      "root": "projects/lpda-orderby",
-      "sourceRoot": "projects/lpda-orderby/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/lpda-orderby/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/lpda-orderby/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "projects/lpda-orderby/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/lpda-orderby/src/test.ts",
-            "tsConfig": "projects/lpda-orderby/tsconfig.spec.json",
-            "karmaConfig": "projects/lpda-orderby/karma.conf.js"
-          }
-        }
-      }
-    },
-    "lpda-download-menu": {
-      "projectType": "library",
-      "root": "projects/lpda-download-menu",
-      "sourceRoot": "projects/lpda-download-menu/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/lpda-download-menu/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/lpda-download-menu/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "projects/lpda-download-menu/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/lpda-download-menu/src/test.ts",
-            "tsConfig": "projects/lpda-download-menu/tsconfig.spec.json",
-            "karmaConfig": "projects/lpda-download-menu/karma.conf.js"
-          }
-        }
-      }
     }
   },
   "defaultProject": "web-components"

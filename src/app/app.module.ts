@@ -6,23 +6,19 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { LpdaDownloadMenuShowcaseComponent } from './pages/lpda-download-menu-showcase/lpda-download-menu-showcase.component';
 import { LayoutComponent } from './layout/layout.component'
-import { LpdaDownloadMenuModule } from "projects/lpda-download-menu/src/public-api";
 import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    LpdaDownloadMenuShowcaseComponent,
     LayoutComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    LpdaDownloadMenuModule,
     HttpClientModule,
 ],
   providers: [],
