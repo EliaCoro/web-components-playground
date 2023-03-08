@@ -1,10 +1,7 @@
 #!/bin/bash
 
 lib=$1
+folder=$2
 
-for pid in $(ps aux | grep "./build.sh $lib" | grep "/bin/bash" | awk '{ print $2 }'); do
-  echo "Killing $pid"
-  sudo kill -9 $pid
-done
 
-run-when-changed --watch "projects/$lib/**/*.*" --exec "./build.sh $lib"
+run-when-changed --watch "projects/$lib/**/*.*" --exec "./watch-build.sh $lib $folder"
