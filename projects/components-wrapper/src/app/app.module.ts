@@ -4,9 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 
 import { createCustomElement } from '@angular/elements';
-import { LpdaDownloadMenuComponent } from 'projects/lpda-download-menu/src/public-api';
-import { LpdaDownloadMenuModule } from 'lpda-download-menu';
 
+// import { YourModule } from './your.module';
+// import { YourComponent } from './your.component';
+
+// TODO use a function instead of an abstract class
 export abstract class WebComponentModule {
   constructor(injector: Injector, component: InstanceType<any>, name: string) {
     const ngElement = createCustomElement(component, {
@@ -22,14 +24,17 @@ export abstract class WebComponentModule {
 @NgModule({
   imports: [
     BrowserModule,
-    LpdaDownloadMenuModule,
+    // YourModule
   ],
-  entryComponents: [LpdaDownloadMenuComponent]
+  entryComponents: [
+    // YourComponent
+  ]
 })
 export class AppModule extends WebComponentModule {
   constructor(
     readonly injector: Injector,
   ) {
-    super(injector, LpdaDownloadMenuComponent, 'lpda-download-menu');
+    // super(injector, YourComponent, 'your-component');
+    super(injector, AppModule, 'lpda-download-menu');
   }
 }
