@@ -41,3 +41,5 @@ testem.log
 .DS_Store
 Thumbs.db
 projects/lpda-download-menu/node_modules/*
+demo-component
+scripts/data.json

@@ -1,0 +1,11 @@
+{
+  "Module": {
+    "klass": "LimeQuickAddQuotasModule",
+    "path": "lime-quick-add-quotas"
+  },
+  "Component": {
+    "klass": "LimeQuickAddQuotasComponent",
+    "path": "lime-quick-add-quotas",
+    "exportName": "quick-add-quotas"
+  }
+}

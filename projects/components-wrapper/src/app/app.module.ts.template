@@ -1,0 +1,37 @@
+import { Injector, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+
+import { createCustomElement } from '@angular/elements';
+import { <%= Module.klass %> } from "<%= Module.path %>";
+import { <%= Component.klass %> } from "<%= Component.path %>";
+
+export abstract class WebComponentModule {
+  constructor(injector: Injector, component: InstanceType<any>, name: string) {
+    const ngElement = createCustomElement(component, {
+      injector,
+    });
+    // change the first parameter to change the name of the HTML tag generated
+    customElements.define(name, ngElement);
+  }
+
+  public ngDoBootstrap(): void { }
+}
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    <%= Module.klass %>
+  ],
+  entryComponents: [
+    <%= Component.klass %>
+  ]
+})
+export class AppModule extends WebComponentModule {
+  constructor(
+    readonly injector: Injector,
+  ) {
+    super(injector, <%= Component.klass %>, '<%= Component.exportName %>');
+  }
+}
