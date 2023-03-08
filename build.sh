@@ -18,6 +18,11 @@ if [ ! -d "projects/$lib" ]; then
   exit 1
 fi
 
+# Clean up
+rm -rf demo-component/*
+
+mkdir -p demo-component/assets
+
 ng build $lib && \
 rm -rf dist/components-wrapper && \
 ng run components-wrapper:build:production --main='projects/components-wrapper/src/app/compile.ts' && \
