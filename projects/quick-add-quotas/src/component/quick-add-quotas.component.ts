@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
   selector: 'lib-quick-add-quotas',
   template: `
     <p>
-      quick-add-quotas works!
+      quick-add-quotas 2 works!
     </p>
   `,
   styles: [

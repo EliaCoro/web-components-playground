@@ -2,6 +2,6 @@
  * Public API Surface of quick-add-quotas
  */
 
-export * from './lib/quick-add-quotas.service';
-export * from './lib/quick-add-quotas.component';
-export * from './lib/quick-add-quotas.module';
+export * from './component/quick-add-quotas.service';
+export * from './component/quick-add-quotas.component';
+export * from './component/quick-add-quotas.module';
