@@ -13,6 +13,10 @@ if [ ! -d "projects/$lib" ]; then
   exit 1
 fi
 
+if [ -z "$final_path" ]; then
+  echo "You can provide a final path to copy the compiled library to with a second argument. E.g. /root/compiled-libraries"
+fi
+
 # Clean up
 rm -rf demo-component/*
 

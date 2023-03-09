@@ -24,6 +24,7 @@
     "document-register-element": "^1.7.2",
     "express": "^4.18.2",
     "http-server": "^14.1.1",
+    "run-when-changed": "^2.1.0",
     "rxjs": "~6.6.0",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
@@ -44,6 +45,7 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "ng-packagr": "^12.1.0",
     "typescript": "~4.3.2"
   },
   "previouslyInstalled": {

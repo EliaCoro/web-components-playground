@@ -13,4 +13,6 @@ if [ ! -d "projects/$lib" ]; then
   exit 1
 fi
 
+./watch-build.sh $lib $folder
+
 run-when-changed --watch "projects/$lib/**/*.*" --exec "./watch-build.sh $lib $folder"
