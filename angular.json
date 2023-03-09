@@ -205,6 +205,37 @@
           }
         }
       }
+    },
+    "quick-add-quotas": {
+      "projectType": "library",
+      "root": "projects/quick-add-quotas",
+      "sourceRoot": "projects/quick-add-quotas/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/quick-add-quotas/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/quick-add-quotas/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/quick-add-quotas/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/quick-add-quotas/src/test.ts",
+            "tsConfig": "projects/quick-add-quotas/tsconfig.spec.json",
+            "karmaConfig": "projects/quick-add-quotas/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "defaultProject": "web-components"

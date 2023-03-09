@@ -21,6 +21,10 @@
       "lpda-orderby": [
         "dist/lpda-orderby/lpda-orderby",
         "dist/lpda-orderby"
+      ],
+      "quick-add-quotas": [
+        "dist/quick-add-quotas/quick-add-quotas",
+        "dist/quick-add-quotas"
       ]
     },
     "noFallthroughCasesInSwitch": true,
