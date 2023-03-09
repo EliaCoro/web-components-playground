@@ -19,6 +19,8 @@ Watch for changes and re-build component with `./watch.sh <your-component-name> 
 <b> Enjoy :) </b>
 
 ## Troubleshooting
+Usually working with node v14.18.3 and npm v6.14.15
+
 | error| possible solution |
 |---|---|
 |./watch.sh: line 16: run-when-changed: command not found | `npm i -g run-when-changed` |
