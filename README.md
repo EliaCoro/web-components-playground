@@ -4,8 +4,19 @@ https://blog.kalvad.com/export-your-angular-component-as-a-web-component/
 
 ## Create a new component
 1. `ng g library <your-component-name>`
-2. `./build.sh <your-component_name> [path_where_to_copy_your_lib]`
+2. `./build.sh <your-component-name> [path/where/to/copy/your/lib]`
 3. Include the file .js inside your application.
+
+## Component development
+<b>[optional] HotReload</b>
+1. Copy `client.js` (inside `autoupdate` folder) inside your project and include it in your html as a module.
+2. Start server with `node autoupdate/server.js`
+
+<b>Build on change</b>
+
+Watch for changes and re-build component with `./watch.sh <your-component-name> [path/where/to/copy/your/lib]`
+
+<b> Enjoy :) </b>
 
 ## Troubleshooting
 | error| possible solution |
