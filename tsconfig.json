@@ -25,6 +25,9 @@
       "quick-add-quotas": [
         "dist/quick-add-quotas/quick-add-quotas",
         "dist/quick-add-quotas"
+      ],
+      "@lib/*": [
+        "projects/quick-add-quotas/src/lib/*"
       ]
     },
     "noFallthroughCasesInSwitch": true,

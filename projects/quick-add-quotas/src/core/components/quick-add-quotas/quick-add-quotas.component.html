@@ -1,0 +1,8 @@
+<button (click)="showModal()" class="btn btn-default">
+  <ng-content></ng-content>
+  {{ 'Quick Add Quotas' | limeTranslate }}
+</button>
+
+<lib-modal (outsideClick)="hideModal()" *ngIf="showingModal"></lib-modal>
+
+<pre *ngIf="debugMode" [innerHtml]="debugData | json" ></pre>

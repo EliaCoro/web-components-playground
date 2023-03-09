@@ -211,6 +211,11 @@
       "root": "projects/quick-add-quotas",
       "sourceRoot": "projects/quick-add-quotas/src",
       "prefix": "lib",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
