@@ -24,3 +24,7 @@ Usually working with node v14.18.3 and npm v6.14.15
 | error| possible solution |
 |---|---|
 |./watch.sh: line 16: run-when-changed: command not found | `npm i -g run-when-changed` |
+
+## Known issues
+
+When you save more than one file in one moment, it may have some trouble. I'll work on it.
