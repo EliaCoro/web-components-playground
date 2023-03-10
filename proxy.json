@@ -1,0 +1,6 @@
+{
+  "/index.php/admin/survey/sa/getAllQuestionsAndSubquestions/": {
+    "target": "http://localhost:9000/getAllQuestionsAndSubquestions/",
+    "secure": false
+  }
+}

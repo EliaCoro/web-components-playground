@@ -15,7 +15,7 @@ fi
 
 for pid in $(ps aux | grep "./build.sh $lib" | grep "/bin/bash" | awk '{ print $2 }'); do
   echo "Killing $pid"
-  sudo kill -9 $pid
+  echo $(kill -9 $pid)
 done
 
 ./build.sh $lib $folder && node autoupdate/notify.js $lib

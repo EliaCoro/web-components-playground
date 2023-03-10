@@ -31,9 +31,16 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@taiga-ui/icons/src",
+                "output": "assets/taiga-ui/icons"
+              }
             ],
             "styles": [
+              "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
+              "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",
               "src/styles.scss"
             ],
             "scripts": []
@@ -73,6 +80,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "port": 4211,
+            "proxyConfig": "proxy.json"
+          },
           "configurations": {
             "production": {
               "browserTarget": "web-components:build:production"
@@ -131,7 +142,8 @@
               "projects/components-wrapper/src/assets"
             ],
             "styles": [
-              "projects/components-wrapper/src/styles.scss"
+              "projects/components-wrapper/src/styles.scss",
+              "projects/quick-add-quotas/dev-only/style.css"
             ],
             "scripts": []
           },
