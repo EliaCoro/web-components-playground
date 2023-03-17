@@ -11,8 +11,8 @@ export class LimeTranslatePipe implements PipeTransform {
     private readonly service: QuickAddQuotasService
   ){}
 
-  transform(value: string | undefined): string | undefined {
-    if(!(value && typeof value == 'string' && value.length > 0)) return value;
+  transform(value: string | undefined): string {
+    if(!(value && typeof value == 'string' && value.length > 0)) return value || '';
     if (!(this.service.translations)) return value;
     const key = text2key(value);
     if (!(this.service.translations[key])) return value;

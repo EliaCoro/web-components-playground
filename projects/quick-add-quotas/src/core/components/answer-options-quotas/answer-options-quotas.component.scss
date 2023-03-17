@@ -1,0 +1,38 @@
+:host{
+  animation: max-height .5s linear;
+  // overflow: auto;
+  max-height: 1000px;
+  overflow-y: hidden;
+
+  &.hidden{
+    max-height: 0;
+    
+  }
+
+  .selected-question-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .d-flex {display: flex;}
+  .d-block {display: block;}
+  .flex-column {flex-direction: column;}
+  .align-items-center {align-items: center;}
+  .justify-content-between {justify-content: space-between;}
+  .justify-content-around {justify-content: space-around;}
+
+  .margin-bottom{
+    margin-bottom: 1rem;
+  }
+
+  .margin-right{
+    margin-right: 1rem;
+  }
+
+  input[type=number]{
+    max-width: 100px;
+  }
+}

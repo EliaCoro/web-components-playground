@@ -1,0 +1,16 @@
+:host{
+  .selected-question-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .margin-bottom{
+    margin-bottom: 1rem;
+  }
+
+  .margin-right{
+    margin-right: 1rem;
+  }
+}

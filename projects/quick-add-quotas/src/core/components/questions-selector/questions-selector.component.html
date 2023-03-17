@@ -1,0 +1,26 @@
+<div style="display: flex; justify-content: space-between;">
+  <h4>
+    1. {{'Select questions' | limeTranslate}}
+  </h4>
+
+  <div style="display: flex; flex-direction: column; margin-left: 1rem;">
+    <ng-select class="margin-bottom" [closeOnSelect]="false" [placeholder]="'Add questions' | limeTranslate"
+      [formControl]="addQuestionControl" [searchable]="true">
+      <ng-option *ngFor="let q of questionsToSelect" [value]="q">
+        [<b [innerText]="q.title"></b>]
+        {{q.question}}
+      </ng-option>
+    </ng-select>
+
+    <div class="selected-question-row margin-bottom" *ngFor="let selected of selectedQuestions">
+      <span class="margin-right">
+        [<b [innerText]="selected.title"></b>]
+        {{selected.question}}
+      </span>
+
+      <button (click)="remove(selected)" class="btn btn-default">
+        <span class="fa fa-trash"></span>
+      </button>
+    </div>
+  </div>
+</div>

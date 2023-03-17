@@ -4,11 +4,14 @@ import { Survey } from "./survey";
 
 export interface QuestionsAndSubquestionsData {
   surveyid?: any;
-  survey?: Survey;
-  questionsList?: Question[];
-  additional_languages?: string;
-  lang_data?: LangData[];
-  tooManyQuotasText?: string;
-  noMoreQuestions?: string;
-  noQuestionsAvaliable?: string;
+  i18n: {
+    noMoreQuestions: string;
+    tooManyQuotas: string;
+    quota_messages: {
+      lang: string;
+      language_name: string;
+      message: string;
+    }[];
+  };
+  questions?: Question[];
 }

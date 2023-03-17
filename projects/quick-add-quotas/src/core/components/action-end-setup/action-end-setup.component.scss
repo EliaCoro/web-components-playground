@@ -1,0 +1,44 @@
+:host {
+  overflow: auto;
+  max-height: 1000px;
+  transition: max-height .5s linear;
+
+  &.hidden {
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  .is-valid {
+    border: 1px solid #28a745;
+  }
+
+  .is-invalid {
+    border: 1px solid #dc3545;
+  }
+
+
+  .select-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 1rem;
+  }
+  // .row-select {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   margin-bottom: 1rem;
+  //   align-items: center;
+
+  //   span {
+  //     display: block;
+  //     margin-right: 1rem;
+  //   }
+
+  //   ng-select {
+  //     flex-grow: 1;
+  //   }
+  // }
+}

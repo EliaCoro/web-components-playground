@@ -1,0 +1,41 @@
+<hr>
+
+<h4>
+  2. {{'Set limits' | limeTranslate}}
+</h4>
+
+<div class="d-flex justify-content-around" style="margin-bottom: 1rem;">
+  <input tabindex="-1" class="activate-answer-quota" type="checkbox" [ngModel]="allSelected"
+    (ngModelChange)="updateAllSelected($event)">
+
+  <span>
+    <!-- TODO stylish selected count -->
+    {{selectedCount}} / {{totalCount}}
+  </span>
+
+  <!-- TODO note that only selected quotas will be edited -->
+  <input class="form-control" min="0" [ngModel]="allLimit" (ngModelChange)="updateAllLimit($event)" type="number">
+</div>
+
+<div style="overflow: auto; max-height: 700px;">
+  <div class="selected-question-row" *ngFor="let a of answerOptions; index as index">
+    <span class="d-flex align-items-center">
+      <input tabindex="-1" id="selected_{{index}}" class="activate-answer-quota" type="checkbox"
+        [(ngModel)]="a.selected" (ngModelChange)="selectedChange($event, index)">
+
+      <label for="selected_{{index}}" style="margin-left: 1rem;">
+        <ng-container *ngFor="let answ of a.answers; index as index; last as isLast">
+          <span>
+            {{answ.answer}}
+          </span>
+
+          <ng-container *ngIf="!isLast">
+            -
+          </ng-container>
+        </ng-container>
+      </label>
+    </span>
+
+    <input [disabled]="a.selected !== true" class="form-control" min="0" [(ngModel)]="a.limit" type="number">
+  </div>
+</div>

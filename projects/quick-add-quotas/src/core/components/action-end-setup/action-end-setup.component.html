@@ -1,0 +1,107 @@
+<hr>
+
+<h4>
+  3. {{'Action setup' | limeTranslate}}
+</h4>
+
+<div class="select-grid">
+  <span [innerText]="'Quota action' | limeTranslate"></span>
+  <ng-select [clearable]="false" (ngModelChange)="updateQuotaAction($event)" [ngModel]="quotaAction">
+    <ng-option [value]="0" [innerText]="'Terminate survey' | limeTranslate"></ng-option>
+    <ng-option [value]="1"
+      [innerText]="'Allow user to modify his last answers before terminate survey' | limeTranslate"></ng-option>
+  </ng-select>
+
+  <span [innerText]="'Quota type' | limeTranslate"></span>
+  <ng-select [clearable]="false" (ngModelChange)="updateQuotaType($event)" [ngModel]="quotaType">
+    <ng-option [value]="0" [innerText]="'Quota' | limeTranslate"></ng-option>
+    <ng-option [value]="1" [innerText]="'Screenout' | limeTranslate"></ng-option>
+    <ng-option [value]="2" [innerText]="'Cheater' | limeTranslate"></ng-option>
+  </ng-select>
+
+  <span [innerText]="'Action to perform' | limeTranslate"></span>
+  <ng-select style="min-width: 200px;" [clearable]="false" [(ngModel)]="actionToPerform">
+    <ng-option [value]="0">{{'Show message' | limeTranslate}}</ng-option>
+    <ng-option [value]="1">{{'Link redirect' | limeTranslate}}</ng-option>
+    <ng-option [value]="2">{{'Show message and link redirect' | limeTranslate}}</ng-option>
+  </ng-select>
+</div>
+
+<hr>
+
+<h4>
+  4. {{'Translations' | limeTranslate}}
+</h4>
+
+<ul class="nav nav-tabs">
+  <li role="presentation" [ngClass]="{'active': activeTab == index}" (click)="activeTab = index"
+    *ngFor="let item of finalActions; index as index">
+    <a role="button">
+      {{item.language_name}}
+
+      <i class="fa fa-fw fa-exclamation-triangle text-danger"
+        [ngStyle]="{'display': item.anythingInvalid ? 'inline-block' : 'none'}"></i>
+    </a>
+  </li>
+</ul>
+
+<ng-container *ngIf="finalActions[activeTab]">
+  <div class="row ls-space margin top-10 " *ngIf="showUrl(finalActions[activeTab].url)">
+    <div class="form-group">
+      <label for="autoload_url" class="control-label col-sm-2"> {{'Autoload URL' | limeTranslate}} </label>
+      <div class="col-sm-10">
+        <div>
+          <div class="row">
+            <div class="col-sm-12">
+              <input type="text" id="autoload_url" placeholder="https://example.com" class="form-control"
+                [ngClass]="finalActions[activeTab].url.valid ? 'is-valid' : 'is-invalid'"
+                [formControl]="finalActions[activeTab].url">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row ls-space margin top-10" *ngIf="showDescription(finalActions[activeTab].urlDescription)">
+    <div class="form-group">
+      <label class="control-label col-sm-2"> {{'URL description' | limeTranslate}} </label>
+      <div class="col-sm-10">
+        <div class="row">
+          <div class="col-sm-12 m-2" style="margin-top: 5px;">
+            <input [placeholder]="'This link will be used for ...' | limeTranslate" type="text" class="form-control"
+              [ngClass]="finalActions[activeTab].urlDescription.valid ? 'is-valid' : 'is-invalid'"
+              [formControl]="finalActions[activeTab].urlDescription">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row ls-space margin top-10" *ngIf="showMessage(finalActions[activeTab].message)">
+    <div class="form-group">
+      <label class="control-label col-sm-2"> {{'Quota message' | limeTranslate}} </label>
+      <div class="col-sm-10">
+        <div class="row">
+          <div class="col-sm-12 m-2" style="margin-top: 5px;">
+            <textarea [placeholder]="finalActions[activeTab].defaultMessage" type="text" class="form-control"
+              [ngClass]="finalActions[activeTab].message.valid ? 'is-valid' : 'is-invalid'" rows="3"
+              [formControl]="finalActions[activeTab].message"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div style="display: flex; flex-direction: row">
+  <button class="btn btn-success" style="margin-right: .25rem;" type="button" (click)="save()">
+    {{'Save' | limeTranslate}}
+  </button>
+
+  <button class="btn btn-default" type="button" (click)="cancel()">
+    {{'Cancel' | limeTranslate}}
+  </button>
+</div>

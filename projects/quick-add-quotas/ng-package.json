@@ -3,5 +3,12 @@
   "dest": "../../dist/quick-add-quotas",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": [
+    "@ng-select/ng-select"
+  ],
+  "assets": [
+    "src/assets/**/*.*",
+    "node_modules/@ng-select/ng-select/themes/default.theme.css"
+  ]
 }

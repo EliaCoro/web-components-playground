@@ -10,11 +10,23 @@ import { QuickAddQuotasService } from '../../services/quick-add-quotas.service';
 })
 export class QuickAddQuotasComponent implements OnInit {
 
-  @Input(`yiicsrftoken`) yiiCsrfToken?: string;
+  @Input(`yiicsrftoken`) set yiiCsrfToken(value: string | undefined) {
+    this.service.setYiiCsrfToken(value);
+  }
+
+  get yiiCsrfToken() {
+    return this.service.yiiCsrfToken;
+  }
 
   @Input("debugmode") debugMode: boolean = environment.debugMode;
 
-  @Input("sid") surveyId?: string;
+  @Input("sid") set surveyId(value: string | number | undefined) {
+    this.service.setSid(value);
+  }
+
+  get surveyId(): string | number | undefined {
+    return this.service.sid;
+  }
 
   @Input() set translations(value: {[key: string]: string} | undefined | string) {
     let valid: {[key: string]: string} = {};
@@ -28,6 +40,14 @@ export class QuickAddQuotasComponent implements OnInit {
 
   get translations() {
     return this.service.translations;
+  }
+
+  get data(): any {
+    return this.service.data;
+  }
+
+  set data(v: any) {
+    this.service.setData(v);
   }
 
   @Input() set settings(value: {[key: string]: any} | undefined | string | (() => any)) {
@@ -56,36 +76,20 @@ export class QuickAddQuotasComponent implements OnInit {
     }
   }
 
-  showingModal: boolean = false;
-
-  get debugData() {
-    return {
-      showModal: this.showModal,
-      yiiCsrfToken: this.yiiCsrfToken,
-      surveyId: this.surveyId,
-      translations: this.translations,
-      showingModal: this.showingModal,
-    }
-  }
-
   constructor(
     private readonly service: QuickAddQuotasService,
   ) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
-    console.log('ngOnChanges', this, changes);
-  }
+  ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {}
 
   showModal(): void {
-    this.showingModal = true;
+    this.service.setShowModal(true);
   }
 
   hideModal(): void {
-    this.showingModal = false;
+    this.service.setShowModal(false);
   }
 
 }

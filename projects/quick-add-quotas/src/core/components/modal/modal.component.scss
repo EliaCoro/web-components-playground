@@ -8,8 +8,18 @@
   overflow-y: auto;
   // z-index: var(--page-in-modal-z-index);
 
+  .nomargin{
+    margin: 0 !important;
+  }
+
+  .close-button{
+    margin-left: .25rem;
+  }
+
   .content{
-    padding: 2rem;
+    width: 90%;
+    max-width: 650px;
+    padding: 1rem;
     position: absolute;
     left: 50%;
     top: 15px;
@@ -19,4 +29,11 @@
     transform: translate(-50%, 0);
     background-color: white;
   }
+
+  .header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
 }

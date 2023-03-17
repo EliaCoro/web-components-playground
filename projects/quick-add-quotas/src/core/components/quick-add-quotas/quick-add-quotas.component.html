@@ -3,6 +3,8 @@
   {{ 'Quick Add Quotas' | limeTranslate }}
 </button>
 
-<lib-modal (outsideClick)="hideModal()" *ngIf="showingModal"></lib-modal>
+<lib-modal (outsideClick)="hideModal()"></lib-modal>
 
-<pre *ngIf="debugMode" [innerHtml]="debugData | json" ></pre>
+<!-- <pre *ngIf="debugMode" [innerHtml]="debugData | json" ></pre> -->
+
+<lib-style></lib-style>

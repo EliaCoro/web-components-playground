@@ -1,11 +1,17 @@
 <div class="content">
+  <div class="header">
+    <h3 class="nomargin" >
+      {{ 'Quick Add Quotas' | limeTranslate }}
+    </h3>
 
-  <h3>
-    {{ 'Quick Add Quotas' | limeTranslate }}
-  </h3>
+    <button (click)="hideModal()" class="close-button btn btn-default" title="close">
+      <span class="fa fa-close"></span>
+    </button>
+  </div>
 
-  <hr>
-  Question(s) selector(s) here<br>
+  <hr><lib-questions-selector></lib-questions-selector>
 
-  <hr>Answer options where
+  <lib-answer-options-quotas></lib-answer-options-quotas>
+
+  <lib-action-end-setup></lib-action-end-setup>
 </div>
