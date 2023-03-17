@@ -19,6 +19,7 @@ fi
 
 # Clean up
 rm -rf demo-component/*
+rm -rf dist/*
 
 mkdir -p demo-component/assets
 

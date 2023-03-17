@@ -1,6 +1,6 @@
 {
-  "/index.php/admin/survey/sa/getAllQuestionsAndSubquestions/": {
-    "target": "http://localhost:9000/getAllQuestionsAndSubquestions/",
+  "/index.php/admin/survey/sa/quickAddQuotasInfo/": {
+    "target": "http://localhost:9000/quickAddQuotasInfo/",
     "secure": false
   }
 }
