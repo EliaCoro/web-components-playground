@@ -85,12 +85,27 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     this.service.dataChange$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.parseData(data);
     });
+
+    this.actionToPerformChange$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.calcAnythingInvalid();
+    });
   }
 
-  isInvalid(item: TranslationControl): boolean {
-    return false;
-    // return !item.lang || !item.language_name;
+  actionToPerformChange(action: ActionToPerform): void {
+    this.actionToPerform = action;
+    this.actionToPerformChange$.next(action);
   }
+
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    this.calcAnythingInvalid();
+  }
+
+  // isInvalid(item: TranslationControl): boolean {
+  //   return false;
+  //   // return !item.lang || !item.language_name;
+  // }
 
   private parseData(data: QuestionsAndSubquestionsData | undefined): void {
     // Avoid ovverriding translations if they are already set
@@ -121,15 +136,17 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     const newUrlDescription = (v: any = null) => newControl(v, []);
 
     const newMessage = (v: any = null) => newControl(v, [
-      Validators.required,
-      Validators.minLength(1),
-      Validators.maxLength(255)
+      // Validators.required,
+      // Validators.minLength(1),
+      // Validators.maxLength(255)
     ]);
 
-    const trans: TranslationControl[] = data.i18n.quota_messages.map((t: any) => ({
+
+
+    const trans: TranslationControl[] = data.i18n.quota_messages.map(t => ({
       lang: t.lang,
-      message: newMessage(t.quota_message),
-      defaultMessage: t.quota_message,
+      message: newMessage(t.message),
+      defaultMessage: t.message,
       language_name: t.language_name,
       url: newUrl(),
       urlDescription: newUrlDescription()
@@ -142,7 +159,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
     this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
       () => {
-        // this.notifyChange();
+        this.notifyChange();
         // console.log('something changed');
         this.calcAnythingInvalid();
       }
@@ -167,7 +184,6 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   }
 
   private calcAnythingInvalid(): void {
-    // console.log('validated calcAnythingInvalid', { t: this });
     this.translations.forEach((tr) => {
       const urlInvalid = tr.url.invalid && this.showUrl(tr.url);
       const urlDescriptionInvalid = tr.urlDescription.invalid && this.showDescription(tr.urlDescription);
@@ -177,6 +193,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   }
 
   private notifyChange(value = this.parseTranslations()): void {
+    console.log("notifyChange", {value, self: this});
     this.translationsChange$.next(value);
   }
 

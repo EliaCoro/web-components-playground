@@ -1,7 +1,7 @@
 <div class="d-grid-2 mb-2">
   <span [innerText]="'Action to perform' | limeTranslate"></span>
 
-  <ng-select class="flex-grow-1" [(ngModel)]="actionToPerform">
+  <ng-select class="flex-grow-1" [ngModel]="actionToPerform" (ngModelChange)="actionToPerformChange($event)">
     <ng-option [value]="0">{{'Show message' | limeTranslate}}</ng-option>
     <ng-option [value]="1">{{'Link redirect' | limeTranslate}}</ng-option>
     <ng-option [value]="2">{{'Show message and link redirect' | limeTranslate}}</ng-option>
@@ -22,8 +22,7 @@
 </ul>
 
 <ng-container *ngIf="translations[activeTab]">
-  <div class="row ls-space margin top-10 ">
-    <!-- <div class="row ls-space margin top-10 " *ngIf="showUrl(translations[activeTab].url)"> -->
+  <div class="row ls-space margin top-10 " *ngIf="showUrl(translations[activeTab].url)">
     <div class="form-group">
       <label for="autoload_url" class="control-label col-sm-2"> {{'Autoload URL' | limeTranslate}} </label>
       <div class="col-sm-10">
@@ -40,8 +39,7 @@
     </div>
   </div>
 
-  <div class="row ls-space margin top-10">
-    <!-- <div class="row ls-space margin top-10" *ngIf="showDescription(translations[activeTab].urlDescription)"> -->
+  <div class="row ls-space margin top-10" *ngIf="showDescription(translations[activeTab].urlDescription)">
     <div class="form-group">
       <label class="control-label col-sm-2"> {{'URL description' | limeTranslate}} </label>
       <div class="col-sm-10">
@@ -57,8 +55,7 @@
     </div>
   </div>
 
-  <div class="row ls-space margin top-10">
-    <!-- <div class="row ls-space margin top-10" *ngIf="showMessage(translations[activeTab].message)"> -->
+  <div class="row ls-space margin top-10" *ngIf="showMessage(translations[activeTab].message)">
     <div class="form-group">
       <label class="control-label col-sm-2"> {{'Quota message' | limeTranslate}} </label>
       <div class="col-sm-10">

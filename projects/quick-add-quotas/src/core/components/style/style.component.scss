@@ -12,7 +12,7 @@ quick-add-quotas {
 
   .nomargin { margin: 0 !important; }
   .my-2 { margin-top: .5rem; margin-bottom: .5rem; }
-  .mb-2{ margin-bottom: .5rem; }
+  .mb-2 { margin-bottom: .5rem; }
   
   .overflow-auto { overflow: auto; }
   .overflow-hidden { overflow: hidden; }
@@ -25,6 +25,10 @@ quick-add-quotas {
 
   @for $i from 1 to 10 {
     $numbers: append($numbers, $i);
+  }
+
+  .is-invalid {
+    border: 1px solid red;
   }
 
   @each $number in $numbers {

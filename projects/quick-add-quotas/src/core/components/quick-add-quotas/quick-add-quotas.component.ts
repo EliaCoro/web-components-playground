@@ -33,7 +33,6 @@ export class QuickAddQuotasComponent {
   constructor(
     private readonly service: QuickAddQuotasService
   ){
-    console.log("debug", this);
     service.settingsChange$.pipe(takeUntil(this.destroy$)).subscribe((settings?: QaqSettings) => {
       this.setSettings(settings, false);
     });
