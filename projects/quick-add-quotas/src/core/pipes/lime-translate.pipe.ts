@@ -12,11 +12,12 @@ export class LimeTranslatePipe implements PipeTransform {
   ){}
 
   transform(value: string | undefined): string {
-    if(!(value && typeof value == 'string' && value.length > 0)) return value || '';
-    if (!(this.service.translations)) return value;
-    const key = text2key(value);
-    if (!(this.service.translations[key])) return value;
+    return value || '';
+    // if(!(value && typeof value == 'string' && value.length > 0)) return value || '';
+    // if (!(this.service.translations)) return value;
+    // const key = text2key(value);
+    // if (!(this.service.translations[key])) return value;
 
-    return this.service.translations[key];
+    // return this.service.translations[key];
   }
 }

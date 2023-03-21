@@ -5,7 +5,9 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   template: '',
   styles: [
     `@import "~@ng-select/ng-select/themes/default.theme.css";`,
-    `.overflow-hidden{ overflow: hidden; }`
+  ],
+  styleUrls: [
+    `./style.component.scss`,
   ],
   encapsulation: ViewEncapsulation.None
 })

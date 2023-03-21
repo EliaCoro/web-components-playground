@@ -1,0 +1,15 @@
+:host{
+  // display: block;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  overflow: hidden;
+
+  ng-select{
+    margin-bottom: .5rem;
+  }
+
+  .selected-container{
+    overflow: auto;
+  }
+}

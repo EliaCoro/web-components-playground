@@ -6,7 +6,9 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'lib-questions-selector',
   templateUrl: './questions-selector.component.html',
-  styleUrls: ['./questions-selector.component.scss']
+  styleUrls: [
+    './questions-selector.component.scss',
+  ]
 })
 export class QuestionsSelectorComponent implements OnInit {
 

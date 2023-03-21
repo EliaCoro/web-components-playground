@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ActionEndSetupComponent } from './action-end-setup.component';
+import { QuickAddQuotasComponent } from './quick-add-quotas.component';
 
-describe('ActionEndSetupComponent', () => {
-  let component: ActionEndSetupComponent;
-  let fixture: ComponentFixture<ActionEndSetupComponent>;
+describe('QuickAddQuotasComponent', () => {
+  let component: QuickAddQuotasComponent;
+  let fixture: ComponentFixture<QuickAddQuotasComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ActionEndSetupComponent ]
+      declarations: [ QuickAddQuotasComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ActionEndSetupComponent);
+    fixture = TestBed.createComponent(QuickAddQuotasComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

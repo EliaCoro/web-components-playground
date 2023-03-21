@@ -1,0 +1,24 @@
+<!-- <div style="display: flex; flex-direction: column"> -->
+  <ng-select  (open)="selectOpened()" [clearSearchOnAdd]="true" (close)="selectClosed()" class="margin-bottom" [closeOnSelect]="false" [placeholder]="'Add questions' | limeTranslate"
+    [formControl]="addQuestionControl" [searchable]="true">
+    <ng-option *ngFor="let q of questionsToSelect" [value]="q">
+      [<b [innerText]="q.title"></b>]
+      {{q.question}}
+    </ng-option>
+  </ng-select>
+  
+
+  <div class="selected-container">
+    <div class="d-flex justify-content-between" *ngFor="let selected of selectedQuestions">
+      <span class="margin-right">
+        [<b [innerText]="selected.title"></b>]
+        {{selected.question}}
+      </span>
+  
+      <button [disabled]="disabled" (click)="remove(selected)" class="btn btn-default">
+        <span class="fa fa-trash"></span>
+      </button>
+    </div>
+  </div>
+
+<!-- </div> -->

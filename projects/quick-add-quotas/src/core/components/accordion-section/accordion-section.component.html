@@ -1,0 +1,8 @@
+<h3 *ngIf="title" class="title">
+  <span *ngIf="index" style="margin-right: .25rem;" >{{index}}.</span>
+  <span>{{title}}</span>
+</h3>
+
+<div class="content">
+  <ng-content></ng-content>
+</div>

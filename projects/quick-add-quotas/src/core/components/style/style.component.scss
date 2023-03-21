@@ -1,0 +1,37 @@
+.overflow-hidden { overflow: hidden; }
+
+quick-add-quotas {
+  .justify-content-between { justify-content: space-between; }
+  .justify-content-around { justify-content: space-around; }
+  
+  .align-items-center { align-items: center; }
+  
+  .flex-grow-1 { flex-grow: 1; }
+  
+  .visibility-hidden { visibility: hidden; }
+
+  .nomargin { margin: 0 !important; }
+  .my-2 { margin-top: .5rem; margin-bottom: .5rem; }
+  .mb-2{ margin-bottom: .5rem; }
+  
+  .overflow-auto { overflow: auto; }
+  .overflow-hidden { overflow: hidden; }
+  .overflow-y-hidden { overflow: hidden; }
+  
+  .d-flex { display: flex; }
+  .d-flex-column { display: flex; flex-direction: column; }
+
+  $numbers: 0;
+
+  @for $i from 1 to 10 {
+    $numbers: append($numbers, $i);
+  }
+
+  @each $number in $numbers {
+    .d-grid-#{$number}{
+      display: grid;
+      grid-template-columns: repeat(#{$number}, auto);
+      grid-gap: 1rem;
+    }
+  }
+}

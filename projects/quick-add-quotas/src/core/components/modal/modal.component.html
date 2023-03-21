@@ -1,17 +1,89 @@
-<div class="content">
-  <div class="header">
-    <h3 class="nomargin" >
-      {{ 'Quick Add Quotas' | limeTranslate }}
-    </h3>
+<ng-template #buttonsRow>
+  <div style="display: flex; align-items: center; margin-top: .5rem; justify-content: space-between;">
+    <button class="btn" [ngClass]="{
+      'btn-default': !isFirstStep,
+      'visibility-hidden': isFirstStep
+    }" type="button" (click)="decreaseIndex()">
+      <ng-template #exitText>{{'Cancel' | limeTranslate}}</ng-template>
 
-    <button (click)="hideModal()" class="close-button btn btn-default" title="close">
-      <span class="fa fa-close"></span>
+      <ng-container *ngIf="!isFirstStep; else exitText">
+        {{'Previous' | limeTranslate}}
+      </ng-container>
+    </button>
+
+    <button class="btn" [ngClass]="{'btn-default': !isLastStep, 'btn-success': isLastStep}"
+      style="margin-right: .25rem;" type="submit">
+      <ng-template #submitText>{{'Confirm' | limeTranslate}}</ng-template>
+
+      <ng-container *ngIf="!isLastStep; else submitText">
+        {{'Next' | limeTranslate}}
+      </ng-container>
+    </button>
+  </div>
+</ng-template>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="d-flex justify-content-between my-2">
+    <h1 class="nomargin" [innerText]="'Quick Add Quotas' | limeTranslate"></h1>
+
+    <button (click)="cancel()" class="btn btn-default">
+      <i class="fa fa-close"></i>
     </button>
   </div>
 
-  <hr><lib-questions-selector></lib-questions-selector>
+  <form [formGroup]="form" (ngSubmit)="increaseIndex()">
+    <ng-container *ngTemplateOutlet="buttonsRow"></ng-container>
 
-  <lib-answer-options-quotas></lib-answer-options-quotas>
+    <div class="flex-grow-1 overflow-y-hidden d-flex-column" *ngIf="currentIndex == 1">
+      <span class="title">
+        <span class="count">1.</span>
+        <span [innerText]="'Select questions' | limeTranslate"></span>
+      </span>
 
-  <lib-action-end-setup></lib-action-end-setup>
+      <lib-add-questions [formControlName]="'questions'"></lib-add-questions>
+      <!-- <hr> -->
+
+      <span class="title">
+        <span class="count">2.</span>
+        <span [innerText]="'Settings' | limeTranslate"></span>
+      </span>
+
+      <div class="select-grid">
+        <span [innerText]="'Quota action' | limeTranslate"></span>
+        <ng-select [dropdownPosition]="'top'" [clearable]="false" [formControlName]="'quotaAction'">
+          <ng-option [value]="0" [innerText]="'Terminate survey' | limeTranslate"></ng-option>
+          <ng-option [value]="1"
+            [innerText]="'Allow user to modify his last answers before terminate survey' | limeTranslate"></ng-option>
+        </ng-select>
+
+        <span [innerText]="'Quota type' | limeTranslate"></span>
+        <ng-select [dropdownPosition]="'top'" [clearable]="false" [formControlName]="'quotaType'">
+          <ng-option [value]="0" [innerText]="'Quota' | limeTranslate"></ng-option>
+          <ng-option [value]="1" [innerText]="'Screenout' | limeTranslate"></ng-option>
+          <ng-option [value]="2" [innerText]="'Cheater' | limeTranslate"></ng-option>
+        </ng-select>
+      </div>
+
+    </div>
+
+    <div class="flex-grow-1 overflow-y-hidden d-flex-column" *ngIf="currentIndex == 2">
+      <span class="title">
+        <span class="count">3.</span>
+        <span [innerText]="'Set limits' | limeTranslate"></span>
+      </span>
+      <lib-select-quota-members [questions]="selectedQuestions" [settings]="quotaSettings"></lib-select-quota-members>
+    </div>
+
+    <div class="flex-grow-1 overflow-y-hidden d-flex-column" *ngIf="currentIndex == 3">
+      <span class="title">
+        <span class="count">4.</span>
+        <span [innerText]="'Redirect and message' | limeTranslate"></span>
+      </span>
+
+      <lib-translations-input [formControlName]="'translations'"></lib-translations-input>
+    </div>
+
+    <ng-container *ngTemplateOutlet="buttonsRow"></ng-container>
+  </form>
 </div>
