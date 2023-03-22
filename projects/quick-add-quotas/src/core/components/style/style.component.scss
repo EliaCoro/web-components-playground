@@ -1,25 +1,84 @@
 .overflow-hidden { overflow: hidden; }
 
 quick-add-quotas {
-  .justify-content-between { justify-content: space-between; }
-  .justify-content-around { justify-content: space-around; }
-  
-  .align-items-center { align-items: center; }
+  $justify-content: (start: flex-start, end: flex-end, center: center, between: space-between, around: space-around);
+  @each $name, $value in $justify-content {
+    .justify-content-#{$name} { justify-content: $value; }
+  }
+
+  $align-items: (start: flex-start, end: flex-end, center: center, stretch: stretch, baseline: baseline);
+  @each $name, $value in $align-items {
+    .align-items-#{$name} { align-items: $value; }
+  }
   
   .flex-grow-1 { flex-grow: 1; }
+  .flex-grow-0 { flex-grow: 0; }
   
   .visibility-hidden { visibility: hidden; }
+  .visibility-visible { visibility: visible; }
 
-  .nomargin { margin: 0 !important; }
-  .my-2 { margin-top: .5rem; margin-bottom: .5rem; }
-  .mb-2 { margin-bottom: .5rem; }
+  @for $i from 0 to 4 {
+    .w-#{$i * 25} { width: $i * 25%; }
+    .h-#{$i * 25} { height: $i * 25%; }
+  }
+
+  .w-auto { width: auto; }
+  .h-auto { height: auto; }
+
+  $directions: (t: top, r: right, b: bottom, l: left, s: left, e: right);
+  @for $i from 0 to 6 {
+    .m-#{$i} { margin: $i * .25rem; }
+    .p-#{$i} { padding: $i * .25rem; }
+
+    @each $direction, $property in $directions {
+      .m#{$direction}-#{$i} { margin-#{$property}: $i * .25rem; }
+      .p#{$direction}-#{$i} { padding-#{$property}: $i * .25rem; }
+    }
+
+    .mx-#{$i} { margin-left: $i * .25rem; margin-right: $i * .25rem; }
+    .px-#{$i} { padding-left: $i * .25rem; padding-right: $i * .25rem; }
+
+    .my-#{$i} { margin-top: $i * .25rem; margin-bottom: $i * .25rem; }
+    .py-#{$i} { padding-top: $i * .25rem; padding-bottom: $i * .25rem; }
+  }
+
+  // $overflow: (auto: auto, hidden: hidden);
+  // $overflow-directions: (x: x, y: y);
+  // @each $direction, $property in $overflow-directions {
+  //   @each $name, $value in $overflow {
+  //     .overflow-#{$direction}-#{$name} { overflow-#{$property}: $value; }
+  //   }
+  // }
+
+  $overflow: auto, hidden, scroll, visible, inherit, initial, unset, overlay;
+  $xy: x, y;
+  @each $value in $overflow {
+    .overflow-#{$value} { overflow: $value; }
+
+    @each $direction in $xy {
+      .overflow-#{$direction}-#{$value} { overflow-#{$direction}: $value; }
+    }
+  }
+
+  .text-underline { text-decoration: underline; }
+
+  .border { border: 1px solid #ccc; }
+  .rounded { border-radius: 5px; }
   
-  .overflow-auto { overflow: auto; }
-  .overflow-hidden { overflow: hidden; }
-  .overflow-y-hidden { overflow: hidden; }
-  
-  .d-flex { display: flex; }
-  .d-flex-column { display: flex; flex-direction: column; }
+  $display: block, inline-block, inline, flex, inline-flex, grid, inline-grid, none;
+  @each $value in $display {
+    .d-#{$value} { display: $value; }
+  }
+
+  $flex-direction: row, column, row-reverse, column-reverse;
+  @each $value in $flex-direction {
+    .flex-#{$value} { flex-direction: $value; }
+
+    .d-flex-#{$value} {
+      flex-direction: $value;
+      display: flex;
+    }
+  }
 
   $numbers: 0;
 

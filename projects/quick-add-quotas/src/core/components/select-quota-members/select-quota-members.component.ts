@@ -107,8 +107,6 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
       this.items.forEach((i) => i.limit = value);
       this.notifyChanges();
     });
-
-
   }
 
   writeValue(obj: Quota[]): void {
@@ -136,6 +134,11 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
     this.notifyChanges();
   }
 
+  limitChange(limit: number, index: number): void {
+    this.items[index].limit = limit;
+    this.notifyChanges();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['questions']) {
       this.generatePartials();
@@ -151,7 +154,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
   }
 
   private formatOutput(): Quota[]{
-    return this.items.map((item: PartialQuota) => {
+    return this.items.filter((item: PartialQuota) => item.selected).map((item: PartialQuota) => {
       const final: Quota & PartialQuota = {
         ...this.defaultSettings,
         ...this.settings,

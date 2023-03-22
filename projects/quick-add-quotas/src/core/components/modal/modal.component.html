@@ -72,7 +72,8 @@
         <span class="count">3.</span>
         <span [innerText]="'Set limits' | limeTranslate"></span>
       </span>
-      <lib-select-quota-members [questions]="selectedQuestions" [settings]="quotaSettings"></lib-select-quota-members>
+
+      <lib-select-quota-members [formControlName]="'quotas'" [questions]="selectedQuestions" [settings]="quotaSettings"></lib-select-quota-members>
     </div>
 
     <div class="flex-grow-1 overflow-y-hidden d-flex-column" *ngIf="currentIndex == 3">
@@ -81,9 +82,11 @@
         <span [innerText]="'Redirect and message' | limeTranslate"></span>
       </span>
 
-      <lib-translations-input [formControlName]="'translations'"></lib-translations-input>
+      <lib-translations-input class="d-flex flex-column overflow-hidden" [formControlName]="'translations'"></lib-translations-input>
     </div>
 
     <ng-container *ngTemplateOutlet="buttonsRow"></ng-container>
   </form>
 </div>
+
+<pre style="position: absolute; top: 0; left: 0; overflow: auto; max-width: 200px;" [innerText]="{formVal: form.value} | json"></pre>

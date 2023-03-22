@@ -8,66 +8,37 @@
   </ng-select>
 </div>
 
+<div class="flex-grow-1 overflow-y-auto">
+  <div class="d-block border rounded mb-5" *ngFor="let item of translations; index as index">
+    <div class="d-flex flex-row align-items-center p-3">
+      <h4 [innerText]="item.language_name" class="text-underline m-0"></h4>
 
-<ul class="nav nav-tabs">
-  <li role="presentation" [ngClass]="{'active': activeTab == index}" (click)="activeTab = index"
-    *ngFor="let item of translations; index as index">
-    <a role="button">
-      {{item.language_name}}
-
-      <i class="fa fa-fw fa-exclamation-triangle text-danger"
+      <i class="fa fa-fw fa-exclamation-triangle text-danger ms-2"
         [ngStyle]="{'display': item.anythingInvalid === true ? 'inline-block' : 'none'}"></i>
-    </a>
-  </li>
-</ul>
+    </div>
 
-<ng-container *ngIf="translations[activeTab]">
-  <div class="row ls-space margin top-10 " *ngIf="showUrl(translations[activeTab].url)">
-    <div class="form-group">
-      <label for="autoload_url" class="control-label col-sm-2"> {{'Autoload URL' | limeTranslate}} </label>
-      <div class="col-sm-10">
-        <div>
-          <div class="row">
-            <div class="col-sm-12">
-              <input type="text" id="autoload_url" placeholder="https://example.com" class="form-control"
-                [ngClass]="translations[activeTab].url.valid ? 'is-valid' : 'is-invalid'"
-                [formControl]="translations[activeTab].url">
-            </div>
-          </div>
-        </div>
+    <div class="d-flex flex-column">
+      <div class="mt-3 px-2 pb-2 d-flex flex-column" *ngIf="showUrl(item.url)">
+        <label class="p-0 control-label col-sm-2 w-100" for="autoload_url_{{index}}"> {{'Autoload URL' | limeTranslate}}
+        </label>
+        <input type="text" id="autoload_url_{{index}}" placeholder="https://example.com" class="form-control"
+          [ngClass]="item.url.valid ? 'is-valid' : 'is-invalid'" [formControl]="item.url">
+      </div>
+
+      <div class="mt-3 px-2 pb-2 d-flex flex-column" *ngIf="showDescription(item.urlDescription)">
+        <label class="p-0 control-label col-sm-2 w-100" for="url_description_{{index}}">
+          {{'URL description' | limeTranslate}} </label>
+        <input [placeholder]="'This link will be used for ...' | limeTranslate" id="url_description_{{index}}"
+          type="text" class="form-control" [ngClass]="item.urlDescription.valid ? 'is-valid' : 'is-invalid'"
+          [formControl]="item.urlDescription">
+      </div>
+
+      <div class="mt-3 px-2 pb-2 d-flex flex-column" *ngIf="showMessage(item.message)">
+        <label class="p-0 control-label col-sm-2 w-100" for="message_{{index}}"> {{'Quota message' | limeTranslate}}
+        </label>
+        <textarea [placeholder]="item.defaultMessage" type="text" id="message_{{index}}" class="form-control"
+          [ngClass]="item.message.valid ? 'is-valid' : 'is-invalid'" rows="3" [formControl]="item.message"></textarea>
       </div>
     </div>
   </div>
-
-  <div class="row ls-space margin top-10" *ngIf="showDescription(translations[activeTab].urlDescription)">
-    <div class="form-group">
-      <label class="control-label col-sm-2"> {{'URL description' | limeTranslate}} </label>
-      <div class="col-sm-10">
-        <div class="row">
-          <div class="col-sm-12 m-2" style="margin-top: 5px;">
-            <input [placeholder]="'This link will be used for ...' | limeTranslate" type="text" class="form-control"
-              [ngClass]="translations[activeTab].urlDescription.valid ? 'is-valid' : 'is-invalid'"
-              [formControl]="translations[activeTab].urlDescription">
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="row ls-space margin top-10" *ngIf="showMessage(translations[activeTab].message)">
-    <div class="form-group">
-      <label class="control-label col-sm-2"> {{'Quota message' | limeTranslate}} </label>
-      <div class="col-sm-10">
-        <div class="row">
-          <div class="col-sm-12 m-2" style="margin-top: 5px;">
-            <textarea [placeholder]="translations[activeTab].defaultMessage" type="text" class="form-control"
-              [ngClass]="translations[activeTab].message.valid ? 'is-valid' : 'is-invalid'" rows="3"
-              [formControl]="translations[activeTab].message"></textarea>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</ng-container>
+</div>

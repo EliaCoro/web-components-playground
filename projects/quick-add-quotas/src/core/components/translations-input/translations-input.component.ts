@@ -52,20 +52,27 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   private readonly actionToPerformChange$: Subject<number> = new Subject<number>();
   actionToPerform: ActionToPerform = ActionToPerform.Redirect;
 
-  activeTab: number = 0;
-
   private controlValueChangesUpdate?: Subscription;
 
   constructor(
     private readonly service: QuickAddQuotasService
   ) {}
 
-  writeValue(obj: Translation[] | any): void {
+  writeValue(obj: Translation[]): void {
     if (!(obj instanceof Array && obj.every((t: any) => t instanceof Object))) throw new Error(`Invalid parameter: ${obj}. Array of Translation expected.`);
 
     if (obj.length == 0) return;
 
-    this.translations = obj;
+    this.translations = obj.map((t: Translation) => {
+      return {
+        lang: t.lang,
+        message: this.newMessageControl(t.message),
+        url: this.newUrlControl(t.url),
+        urlDescription: this.newUrlDescriptionControl(t.urlDescription),
+        defaultMessage: t.defaultMessage,
+        language_name: t.language_name
+      };
+    });
   }
 
   registerOnChange(fn: any): void {
@@ -107,6 +114,30 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   //   // return !item.lang || !item.language_name;
   // }
 
+  // newUrl = (v: any = null) => newControl(v, [
+  //   Validators.required,
+  //   Validators.pattern('^(https?:\\/\\/)?' + // protocol
+  //     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+  //     '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+  //     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+  //     '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+  //     '(\\#[-a-z\\d_]*)?$') // fragment locator
+  // ])
+
+  private readonly newMessageControl = (v: any = null) => new FormControl(v, Validators.required);
+
+  private readonly newUrlDescriptionControl = (v: any = null) => new FormControl(v);
+
+  private readonly newUrlControl = (v: any = null) => new FormControl(v, [
+    Validators.required,
+    Validators.pattern('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$') // fragment locator
+  ]);
+
   private parseData(data: QuestionsAndSubquestionsData | undefined): void {
     // Avoid ovverriding translations if they are already set
     if (this.translations && this.translations.length > 0) return;
@@ -116,30 +147,48 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     }
 
     const controls: FormControl[]= [];
-    const newControl = (value: any, validators: any[] | any = []) => {
-      const c = new FormControl(value, validators);
-      controls.push(c);
-      return c;
+    // const newControl = (value: any, validators: any[] | any = []) => {
+    //   const c = new FormControl(value, validators);
+    //   controls.push(c);
+    //   return c;
+    // };
+
+    const newUrl = (v: any = null): FormControl => {
+      const control = this.newUrlControl(v);
+      controls.push(control);
+      return control;
+    }
+
+    // const newUrl = (v: any = null) => newControl(v, [
+    //   Validators.required,
+    //   Validators.pattern('^(https?:\\/\\/)?' + // protocol
+    //     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+    //     '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+    //     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    //     '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    //     '(\\#[-a-z\\d_]*)?$') // fragment locator
+    // ]);
+
+
+    // const newUrlDescription = (v: any = null) => newControl(v, []);
+
+    const newUrlDescription = (v: any = null): FormControl => {
+      const control = this.newUrlDescriptionControl(v);
+      controls.push(control);
+      return control;
     };
 
-    const newUrl = (v: any = null) => newControl(v, [
-      Validators.required,
-      Validators.pattern('^(https?:\\/\\/)?' + // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-        '(\\#[-a-z\\d_]*)?$') // fragment locator
-    ]);
+    const newMessage = (v: any = null): FormControl => {
+      const control = this.newMessageControl(v);
+      controls.push(control);
+      return control;
+    };
 
-
-    const newUrlDescription = (v: any = null) => newControl(v, []);
-
-    const newMessage = (v: any = null) => newControl(v, [
-      // Validators.required,
-      // Validators.minLength(1),
-      // Validators.maxLength(255)
-    ]);
+    // const newMessage = (v: any = null) => newControl(v, [
+    //   // Validators.required,
+    //   // Validators.minLength(1),
+    //   // Validators.maxLength(255)
+    // ]);
 
 
 
@@ -156,14 +205,20 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
 
     this.controlValueChangesUpdate?.unsubscribe();
-
-    this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
-      () => {
+    controls.map((c) => c.valueChanges).forEach((c) => {
+      c.subscribe(() => {
         this.notifyChange();
-        // console.log('something changed');
         this.calcAnythingInvalid();
-      }
-    );
+      })
+    });
+
+    // this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
+    //   () => {
+    //     this.notifyChange();
+    //     // log('something changed');
+    //     this.calcAnythingInvalid();
+    //   }
+    // );
   };
 
   translationsChange(translations: TranslationControl[]): void {
@@ -193,7 +248,6 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   }
 
   private notifyChange(value = this.parseTranslations()): void {
-    console.log("notifyChange", {value, self: this});
     this.translationsChange$.next(value);
   }
 

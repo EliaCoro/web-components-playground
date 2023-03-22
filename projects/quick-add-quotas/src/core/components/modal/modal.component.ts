@@ -98,17 +98,11 @@ export class ModalComponent {
     ])
   })
 
-  constructor(){
-    console.log("modal", this);
-  }
+  constructor(){}
 
   ngOnInit(): void {
     this.form.get('questions')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.selectedQuestions = this.form.get('questions')?.value;
-    });
-    
-    this.form.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      console.log("form changed", this.form.value);
     });
   }
 
