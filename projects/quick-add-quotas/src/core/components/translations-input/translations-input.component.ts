@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, forwardRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, forwardRef } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { QuickAddQuotasService } from '../../services/quick-add-quotas.service';
 import { Translation } from '@lib/translation';
@@ -104,25 +104,8 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   }
 
   ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
     this.calcAnythingInvalid();
   }
-
-  // isInvalid(item: TranslationControl): boolean {
-  //   return false;
-  //   // return !item.lang || !item.language_name;
-  // }
-
-  // newUrl = (v: any = null) => newControl(v, [
-  //   Validators.required,
-  //   Validators.pattern('^(https?:\\/\\/)?' + // protocol
-  //     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-  //     '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-  //     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-  //     '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-  //     '(\\#[-a-z\\d_]*)?$') // fragment locator
-  // ])
 
   private readonly newMessageControl = (v: any = null) => new FormControl(v, Validators.required);
 
@@ -142,35 +125,15 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     // Avoid ovverriding translations if they are already set
     if (this.translations && this.translations.length > 0) return;
 
-    if (!data) {
-      return;
-    }
+    if (!data) { return; }
 
     const controls: FormControl[]= [];
-    // const newControl = (value: any, validators: any[] | any = []) => {
-    //   const c = new FormControl(value, validators);
-    //   controls.push(c);
-    //   return c;
-    // };
 
     const newUrl = (v: any = null): FormControl => {
       const control = this.newUrlControl(v);
       controls.push(control);
       return control;
     }
-
-    // const newUrl = (v: any = null) => newControl(v, [
-    //   Validators.required,
-    //   Validators.pattern('^(https?:\\/\\/)?' + // protocol
-    //     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    //     '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-    //     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-    //     '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    //     '(\\#[-a-z\\d_]*)?$') // fragment locator
-    // ]);
-
-
-    // const newUrlDescription = (v: any = null) => newControl(v, []);
 
     const newUrlDescription = (v: any = null): FormControl => {
       const control = this.newUrlDescriptionControl(v);
@@ -184,14 +147,6 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
       return control;
     };
 
-    // const newMessage = (v: any = null) => newControl(v, [
-    //   // Validators.required,
-    //   // Validators.minLength(1),
-    //   // Validators.maxLength(255)
-    // ]);
-
-
-
     const trans: TranslationControl[] = data.i18n.quota_messages.map(t => ({
       lang: t.lang,
       message: newMessage(t.message),
@@ -203,22 +158,17 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
     this.translationsChange(trans);
 
-
     this.controlValueChangesUpdate?.unsubscribe();
-    controls.map((c) => c.valueChanges).forEach((c) => {
-      c.subscribe(() => {
+    this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
+      () => {
         this.notifyChange();
         this.calcAnythingInvalid();
-      })
-    });
+      }
+    );
 
-    // this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
-    //   () => {
-    //     this.notifyChange();
-    //     // log('something changed');
-    //     this.calcAnythingInvalid();
-    //   }
-    // );
+    // This is useful to emit changes even if the user doesn't change anything.
+    // In this way parent component has this data even if empty.
+    setTimeout(() => { this.notifyChange(); });
   };
 
   translationsChange(translations: TranslationControl[]): void {
