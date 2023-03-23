@@ -57,12 +57,14 @@
             [innerText]="'Allow user to modify his last answers before terminate survey' | limeTranslate"></ng-option>
         </ng-select>
 
-        <span [innerText]="'Quota type' | limeTranslate"></span>
-        <ng-select [dropdownPosition]="'top'" [clearable]="false" [formControlName]="'quotaType'">
-          <ng-option [value]="0" [innerText]="'Quota' | limeTranslate"></ng-option>
-          <ng-option [value]="1" [innerText]="'Screenout' | limeTranslate"></ng-option>
-          <ng-option [value]="2" [innerText]="'Cheater' | limeTranslate"></ng-option>
-        </ng-select>
+        <ng-container *ngIf="includeQuotaType">
+          <span [innerText]="'Quota type' | limeTranslate"></span>
+          <ng-select [dropdownPosition]="'top'" [clearable]="false" [formControlName]="'quotaType'">
+            <ng-option [value]="0" [innerText]="'Quota' | limeTranslate"></ng-option>
+            <ng-option [value]="1" [innerText]="'Screenout' | limeTranslate"></ng-option>
+            <ng-option [value]="2" [innerText]="'Cheater' | limeTranslate"></ng-option>
+          </ng-select>
+        </ng-container>
       </div>
 
     </div>

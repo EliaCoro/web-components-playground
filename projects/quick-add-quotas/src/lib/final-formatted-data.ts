@@ -9,7 +9,7 @@ export type FinalFormattedData = {
     autoload_url: 0 | 1,
     active: 0 | 1,
     action: QuotaAction,
-    quota_type: QuotaType
+    quota_type?: QuotaType
   },
   quota_members: {
     sid: number,

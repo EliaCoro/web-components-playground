@@ -52,8 +52,13 @@ export class QuickAddQuotasComponent {
 
   saveQuotas(data: FinalFormattedData[]): void {
     this.service.saveQuotas(data).subscribe(
-      () => {
-        this.hideModal();
+      (data: {
+        success: boolean,
+      }) => {
+        if (data.success != false) {
+          this.hideModal();
+          window.location.reload();
+        }
       },
       (er: HttpErrorResponse) => {
         console.error(er);

@@ -14,6 +14,7 @@ import { Translation } from '@lib/translation';
 import { QuotaSettings } from '../select-quota-members/select-quota-members.component';
 import { AddQuestionsComponent } from '../add-questions/add-questions.component';
 import { FinalFormattedData } from '@lib/final-formatted-data';
+import { INCLUDE_QUOTA_TYPE } from '@lib/include-quota-type';
 
 const translationValidator = (control: AbstractControl): ValidationErrors | null => {
   const tr: Translation | undefined = control.value;
@@ -42,6 +43,8 @@ const quotaValidator = (control: AbstractControl): ValidationErrors | null => {
   ]
 })
 export class ModalComponent {
+
+  includeQuotaType: boolean = INCLUDE_QUOTA_TYPE;
 
   @Output() onSubmit$: EventEmitter<FinalFormattedData[]> = new EventEmitter<FinalFormattedData[]>();
 
@@ -80,10 +83,20 @@ export class ModalComponent {
       CustomValidators.inclusion(QuotaActions)
     ]),
 
-    quotaType: new FormControl(QuotaType.Quota, [
-      CustomValidators.required,
-      CustomValidators.inclusion(QuotaTypes)
-    ]),
+    ...(INCLUDE_QUOTA_TYPE ?
+      {
+        quotaType: new FormControl(QuotaType.Quota, [
+          CustomValidators.required,
+          CustomValidators.inclusion(QuotaTypes)
+        ]),
+      } : {}),
+
+    // ...{
+    //   quotaType: new FormControl(QuotaType.Quota, [
+    //     CustomValidators.required,
+    //     CustomValidators.inclusion(QuotaTypes)
+    //   ]),
+    // },
 
     actionToPerform: new FormControl(ActionToPerform.Redirect, [
       CustomValidators.required,
@@ -173,7 +186,8 @@ export class ModalComponent {
       final.push({
         language_settings: language_settings,
         quota: {
-          quota_type: quotaType,
+          ...(INCLUDE_QUOTA_TYPE ? { quota_type: quotaType } : {}),
+          // quota_type: quotaType,
           active: 1,
           action: quotaAction,
           autoload_url: autoloadUrl ? 1 : 0,
