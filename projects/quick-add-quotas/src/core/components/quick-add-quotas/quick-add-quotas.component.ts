@@ -6,6 +6,8 @@ import { QaqDefaultSettings, QaqSettings } from '@lib/qaq-settings';
 import { takeUntil } from 'rxjs/operators';
 import { AutoDestroy } from '@lib/auto-destroy';
 import { Subject } from 'rxjs';
+import { FinalFormattedData } from '@lib/final-formatted-data';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'lib-quick-add-quotas',
@@ -15,11 +17,11 @@ import { Subject } from 'rxjs';
 export class QuickAddQuotasComponent {
 
   private _settings: QaqSettings = QaqDefaultSettings;
-  @Input() set settings(value: {[key: string]: any} | undefined | string | (() => any)) {
+  @Input() set settings(value: { [key: string]: any } | undefined | string | (() => any)) {
     this.setSettings(value, true);
   }
 
-  get settings(): {[key: string]: any} | undefined | string | (() => any) {
+  get settings(): { [key: string]: any } | undefined | string | (() => any) {
     return this._settings;
   }
 
@@ -32,7 +34,7 @@ export class QuickAddQuotasComponent {
 
   constructor(
     private readonly service: QuickAddQuotasService
-  ){
+  ) {
     service.settingsChange$.pipe(takeUntil(this.destroy$)).subscribe((settings?: QaqSettings) => {
       this.setSettings(settings, false);
     });
@@ -48,6 +50,18 @@ export class QuickAddQuotasComponent {
     document.body.classList.remove('overflow-hidden');
   }
 
+  saveQuotas(data: FinalFormattedData[]): void {
+    this.service.saveQuotas(data).subscribe(
+      () => {
+        this.hideModal();
+      },
+      (er: HttpErrorResponse) => {
+        console.error(er);
+      },
+      () => { }
+    )
+  }
+
   private setSettings(value: any, notify: boolean): void {
     let valid: Partial<QaqSettings> = {};
     if (typeof value == 'object') valid = value;
@@ -56,7 +70,7 @@ export class QuickAddQuotasComponent {
     else if (typeof value == 'function') valid = value();
 
     // Downcase all keys
-    let downcased: {[key: string]: any} = {};
+    let downcased: { [key: string]: any } = {};
     for (let key in valid) {
       downcased[key.toLowerCase()] = (valid as any)[key];
     }

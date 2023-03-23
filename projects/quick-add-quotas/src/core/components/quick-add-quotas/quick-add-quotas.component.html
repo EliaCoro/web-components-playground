@@ -3,7 +3,7 @@
   {{ 'Quick Add Quotas' | limeTranslate }}
 </button>
 
-<lib-modal *ngIf="showingModal" (close)="hideModal()"></lib-modal>
+<lib-modal (onSubmit$)="saveQuotas($event)" *ngIf="showingModal" (close)="hideModal()"></lib-modal>
 
 <lib-style></lib-style>
 

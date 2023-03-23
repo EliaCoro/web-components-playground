@@ -6,16 +6,17 @@ import { AutoDestroy } from '@lib/auto-destroy';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { CustomValidators } from '@lib/custom-validators';
-import { QuotaAction } from '@lib/quota-action';
-import { QuotaType } from '@lib/quota-type';
-import { ActionToPerform } from '@lib/action-to-perform';
+import { QuotaAction, QuotaActions, defaultQuotaAction } from '@lib/quota-action';
+import { QuotaType, QuotaTypes, defaultQuotaType } from '@lib/quota-type';
+import { ActionToPerform, ActionsToPerform } from '@lib/action-to-perform';
 import { Quota } from '@lib/quota';
 import { Translation } from '@lib/translation';
 import { QuotaSettings } from '../select-quota-members/select-quota-members.component';
 import { AddQuestionsComponent } from '../add-questions/add-questions.component';
+import { FinalFormattedData } from '@lib/final-formatted-data';
 
 const translationValidator = (control: AbstractControl): ValidationErrors | null => {
-  const tr : Translation | undefined = control.value;
+  const tr: Translation | undefined = control.value;
   if (!(tr instanceof Object)) return { invalid: true };
 
   if (!(tr.lang && tr.lang.length > 0)) return { invalid: true, spec: 'lang' };
@@ -42,13 +43,15 @@ const quotaValidator = (control: AbstractControl): ValidationErrors | null => {
 })
 export class ModalComponent {
 
+  @Output() onSubmit$: EventEmitter<FinalFormattedData[]> = new EventEmitter<FinalFormattedData[]>();
+
   @Output() private readonly close: EventEmitter<void> = new EventEmitter<void>();
 
   @AutoDestroy private destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild(AddQuestionsComponent) addQuestionsInput?: AddQuestionsComponent;
 
-  currentIndex: 1|2|3 = 1;
+  currentIndex: 1 | 2 | 3 = 1;
 
   get isLastStep(): boolean {
     return this.currentIndex == 3;
@@ -60,10 +63,7 @@ export class ModalComponent {
 
   selectedQuestions: Question[] = [];
 
-  // TODO set this
-  quotaSettings: Partial<QuotaSettings> = {};
-
-  readonly form = new FormGroup({
+  readonly form: FormGroup = new FormGroup({
     questions: new FormControl([], [
       CustomValidators.required,
       CustomValidators.arrayMinLength(1)
@@ -77,18 +77,18 @@ export class ModalComponent {
 
     quotaAction: new FormControl(QuotaAction.Terminate, [
       CustomValidators.required,
-      CustomValidators.inclusion([QuotaAction.AllowChange, QuotaAction.Terminate])
+      CustomValidators.inclusion(QuotaActions)
     ]),
 
     quotaType: new FormControl(QuotaType.Quota, [
       CustomValidators.required,
-      CustomValidators.inclusion([QuotaType.Cheater, QuotaType.Quota, QuotaType.Screenout])
+      CustomValidators.inclusion(QuotaTypes)
     ]),
 
-    // actionToPerform: new FormControl(ActionToPerform.Redirect, [
-    //   CustomValidators.required,
-    //   CustomValidators.inclusion([ActionToPerform.MessageAndRedirect, ActionToPerform.Redirect, ActionToPerform.Message])
-    // ]),
+    actionToPerform: new FormControl(ActionToPerform.Redirect, [
+      CustomValidators.required,
+      CustomValidators.inclusion(ActionsToPerform)
+    ]),
 
     // TODO validate translations based on actionToPerform
     translations: new FormControl([], [
@@ -98,7 +98,7 @@ export class ModalComponent {
     ])
   })
 
-  constructor(){}
+  constructor() { }
 
   ngOnInit(): void {
     this.form.get('questions')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -111,7 +111,7 @@ export class ModalComponent {
   }
 
   private submit(): void {
-    console.log("submitted", this);
+    this.onSubmit$.emit(this.parseData());
   }
 
   increaseIndex(): void {
@@ -142,5 +142,63 @@ export class ModalComponent {
   private fixIndexIfInvalid(): void {
     if (!(this.currentIndex && this.currentIndex > 0)) this.currentIndex = 1;
     else if (this.currentIndex > 2) this.currentIndex = 3;
+  }
+
+  private parseData(): FinalFormattedData[] {
+    const final: FinalFormattedData[] = [];
+
+    const formVal = this.form.value;
+
+    const language_settings = (formVal.translations ?? []).map((message: Translation) => ({
+      quotals_language: message.lang,
+      quotals_message: message.message,
+      quotals_name: message.message,
+      quotals_url: message.url,
+      quotals_urldescrip: message.urlDescription,
+    }));
+
+    const quotaAction: QuotaAction = formVal.quotaAction ?? defaultQuotaAction;
+    const autoloadUrl: boolean = formVal.actionToPerform === ActionToPerform.Redirect;
+    const quotaType: QuotaType = formVal.quotaType ?? defaultQuotaType;
+    const sid: number = 0;
+
+    const add = (data: {
+      name: string;
+      qlimit: number,
+      quota_members: {
+        code: string,
+        qid: number,
+      }[],
+    }) => {
+      final.push({
+        language_settings: language_settings,
+        quota: {
+          quota_type: quotaType,
+          active: 1,
+          action: quotaAction,
+          autoload_url: autoloadUrl ? 1 : 0,
+          name: data.name,
+          qlimit: data.qlimit ?? 0,
+          sid: sid,
+        },
+        quota_members: data.quota_members.map((member) => ({
+          ...member,
+          sid: sid,
+        })),
+      });
+    };
+
+    formVal.quotas.forEach((quota: Quota) => {
+      add({
+        name: quota.name,
+        qlimit: quota.limit,
+        quota_members: quota.members.map((member) => ({
+          code: member.code,
+          qid: member.qid,
+        }))
+      })
+    });
+
+    return final;
   }
 }

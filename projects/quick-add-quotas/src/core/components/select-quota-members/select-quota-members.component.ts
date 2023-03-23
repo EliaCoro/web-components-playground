@@ -10,13 +10,14 @@ import { Quota } from '@lib/quota';
 import { QuotaAction } from '@lib/quota-action';
 import { QuotaMember } from '@lib/quota-member';
 import { QuotaType } from '@lib/quota-type';
-// import { AnswerOption } from '../answer-options-quotas/answer-options-quotas.component';
 
-// export interface AnswerOption {
-//   answers: Answer[];
-//   selected: boolean;
-//   limit: number;
-// }
+export interface ExportQuota {
+  members: QuotaMember[];
+  limit: number;
+  selected: boolean;
+  title: string;
+  name: string;
+}
 
 export interface PartialQuota {
   answers: Answer[];
@@ -51,7 +52,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
 
   @AutoDestroy destroy$: Subject<void> = new Subject<void>();
 
-  private readonly notifyChange$ = new Subject<Quota[]>();
+  private readonly notifyChange$ = new Subject<ExportQuota[]>();
 
   // TODO notify this on input touch
   readonly touched$: Subject<void> = new Subject<void>();
@@ -67,7 +68,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
 
   @Input() questions: Question[] = [];
 
-  @Input() settings: Partial<QuotaSettings> = {};
+  // @Input() settings: Partial<QuotaSettings> = {};
 
   private readonly defaultSettings: QuotaSettings = {
     sid: 0,
@@ -157,15 +158,15 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
     this.notifyChange$.next(this.formatOutput());
   }
 
-  private formatOutput(): Quota[]{
+  private formatOutput(): ExportQuota[]{
+    const settings = this.defaultSettings;
+
     return this.items.filter((item: PartialQuota) => item.selected).map((item: PartialQuota) => {
-      const final: Quota & PartialQuota = {
-        ...this.defaultSettings,
-        ...this.settings,
+      const final: ExportQuota = {
         ...item,
         name: this.genName(item),
         members: item.answers.map((a: Answer) => ({
-          sid: this.settings.sid as number,
+          sid: settings.sid as number,
           qid: a.qid as number,
           code: a.code as string,
         })),

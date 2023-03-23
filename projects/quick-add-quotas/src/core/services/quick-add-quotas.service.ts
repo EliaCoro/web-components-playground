@@ -3,6 +3,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Injectable } from '@angular/core';
 import { ActionToPerform } from '@lib/action-to-perform';
 import { Answer } from '@lib/answer';
+import { FinalFormattedData } from '@lib/final-formatted-data';
 import { QaqSettings } from '@lib/qaq-settings';
 import { Question } from '@lib/question';
 import { QuestionsAndSubquestionsData } from '@lib/questions-and-subquestions-data';
@@ -76,6 +77,28 @@ export class QuickAddQuotasService {
     if (this.tryLoadInitialDataTimeout) clearTimeout(this.tryLoadInitialDataTimeout);
 
     this.tryLoadInitialDataTimeout = setTimeout(() => exec().subscribe(), 1000);
+  }
+
+  saveQuotas(
+    data: FinalFormattedData[],
+    sid: number | undefined = this.settings?.surveyid,
+    token: string | undefined = this.settings?.yiicsrftoken
+    ): Observable<any> {
+      if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
+
+      const urlTemplate = '/index.php/surveyAdministration/quickAddQuotas/surveyid/{{sid}}';
+  
+      const url = urlTemplate.replace("{{sid}}", sid.toString());
+  
+      const body = new URLSearchParams();
+      body.set('YII_CSRF_TOKEN', token);
+      body.set('payload', JSON.stringify(data));
+
+      const options = {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      };
+
+      return this.http.post<any>(url, body.toString(), options);
   }
 
   setSettings(settings: QaqSettings | undefined): void {

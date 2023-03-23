@@ -6,7 +6,7 @@ import { Subject, Subscription, merge } from 'rxjs';
 import { AutoDestroy } from '@lib/auto-destroy';
 import { take, takeUntil } from 'rxjs/operators';
 import { QuestionsAndSubquestionsData } from '@lib/questions-and-subquestions-data';
-import { ActionToPerform } from '@lib/action-to-perform';
+import { ActionToPerform, defaultActionToPerform } from '@lib/action-to-perform';
 
 declare interface TranslationControl {
   lang: string; // Short language code
@@ -50,7 +50,16 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   }
 
   private readonly actionToPerformChange$: Subject<number> = new Subject<number>();
-  actionToPerform: ActionToPerform = ActionToPerform.Redirect;
+
+  private _actionToPerform: ActionToPerform = ActionToPerform.Redirect;
+
+  @Input() set actionToPerform(value: ActionToPerform | undefined) {
+    this.actionToPerformChange(value ?? defaultActionToPerform);
+  }
+
+  get actionToPerform(): ActionToPerform | undefined {
+    return this._actionToPerform ?? defaultActionToPerform;
+  }
 
   private controlValueChangesUpdate?: Subscription;
 
@@ -99,7 +108,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
   }
 
   actionToPerformChange(action: ActionToPerform): void {
-    this.actionToPerform = action;
+    this._actionToPerform = action;
     this.actionToPerformChange$.next(action);
   }
 
