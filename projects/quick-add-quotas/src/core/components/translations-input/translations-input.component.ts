@@ -56,7 +56,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
   constructor(
     private readonly service: QuickAddQuotasService
-  ) {}
+  ) { }
 
   writeValue(obj: Translation[]): void {
     if (!(obj instanceof Array && obj.every((t: any) => t instanceof Object))) throw new Error(`Invalid parameter: ${obj}. Array of Translation expected.`);
@@ -127,11 +127,13 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
     if (!data) { return; }
 
-    const controls: FormControl[]= [];
+    const controls: FormControl[] = [];
+    const urlControls: FormControl[] = [];
 
     const newUrl = (v: any = null): FormControl => {
       const control = this.newUrlControl(v);
       controls.push(control);
+      urlControls.push(control);
       return control;
     }
 
@@ -165,6 +167,17 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
         this.calcAnythingInvalid();
       }
     );
+
+    // When user sets first link, all other links are set to the same value if they are empty and untouched
+    if (urlControls && Array.isArray(urlControls) && urlControls.length > 1) {
+      urlControls[0].valueChanges.pipe(takeUntil(this.destroy$)).subscribe((v) => {
+        if (!v) return;
+
+        urlControls.slice(1).forEach((c) => {
+          if (!c.dirty) c.setValue(v);
+        });
+      });
+    }
 
     // This is useful to emit changes even if the user doesn't change anything.
     // In this way parent component has this data even if empty.
@@ -207,7 +220,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
       message: t.message.value,
       url: t.url.value,
       urlDescription: t.urlDescription.value,
-    
+
       defaultMessage: t.defaultMessage,
       language_name: t.language_name,
     }));
