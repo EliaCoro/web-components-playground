@@ -110,8 +110,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
   }
 
   writeValue(obj: Quota[]): void {
-    this.generatePartials();
-    this.notifyChanges();
+    this.generatePartials(obj);
   }
 
   registerOnChange(fn: any): void {
@@ -128,6 +127,11 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
   }
 
   ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+    // Make sure parent component has data even if user doesn't change anything
+    this.notifyChanges();
+  }
 
   selectedChange(selected: boolean, index: number): void {
     this.items[index].selected = selected;
@@ -175,7 +179,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
     });
   }
 
-  private generatePartials(): void {
+  private generatePartials(savedQuotas: Quota[] = []): void {
     const answerOptions: PartialQuota[] = [];
 
     this.questions.forEach((q: Question, index: number) => {
@@ -207,7 +211,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
       }
     });
 
-    this.items = answerOptions;
+    this.items = savedQuotas && savedQuotas.length > 0 ? this.setQuotaLimitsBySaved(savedQuotas, answerOptions) : answerOptions;
     this.notifyChanges();
   }
 
@@ -218,5 +222,44 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
 
   private title(q: Question, a: Answer): string {
     return `${q.question} - ${a.answer}`;
+  }
+
+  /**
+   * 
+   * @param quotas Quotas to compare against
+   * @param items PartialQuotas to compare
+   * @returns PartialQuotas with selected and limit set
+   */
+  private setQuotaLimitsBySaved(quotas: Quota[], items: PartialQuota[]): PartialQuota[] {
+    return items.map((i: PartialQuota) => {
+      const match = quotas.find((q: Quota) => this.areEqual(q, i));
+
+      i.selected = match ? true : false;
+
+      if (match) {
+        i.limit = match.limit;
+      }
+
+      return i;
+    });
+  }
+
+  /**
+   * 
+   * @param a Quota to compare
+   * @param b PartialQuota to compare
+   * @returns Boolean indicating if the two quotas have the same members/answers
+   */
+  private areEqual(a: Quota, b: PartialQuota): boolean {
+    const aMembers = a.members.sort((a, b) => a.qid - b.qid);
+    const bMembers = b.answers.sort((a, b) => a.qid - b.qid);
+
+    const membersEqual = aMembers.length === bMembers.length && aMembers.every((m, i) => this.areMembersEqual(m, bMembers[i]));
+
+    return a.members.length === b.answers.length && membersEqual;
+  }
+
+  private areMembersEqual(a: QuotaMember, b: Answer): boolean {
+    return a.qid === b.qid && a.code === b.code;
   }
 }
