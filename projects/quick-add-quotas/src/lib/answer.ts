@@ -4,4 +4,6 @@ export interface Answer {
   code: string;
   language: string;
   qid: number;
+
+  question?: string;
 }

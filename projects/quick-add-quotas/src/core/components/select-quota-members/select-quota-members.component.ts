@@ -68,8 +68,6 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
 
   @Input() questions: Question[] = [];
 
-  // @Input() settings: Partial<QuotaSettings> = {};
-
   private readonly defaultSettings: QuotaSettings = {
     sid: 0,
     autoloadUrl: false,
@@ -189,7 +187,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
       if (index == 0) {
         q.answers.forEach((a: Answer) => {
           answerOptions.push({
-            answers: [a],
+            answers: [{...a, question: q.question}],
             selected: true,
             title: this.title(q, a),
             limit: 0,
@@ -200,7 +198,9 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
         answerOptions.forEach((ao: PartialQuota) => {
           q.answers!.forEach((a: Answer) => {
             newAnswerOptions.push({
-              answers: [...ao.answers, a],
+              answers: [
+                ...ao.answers, {...a, question: q.question}
+              ],
               selected: true,
               title: this.title(q, a),
               limit: 0
