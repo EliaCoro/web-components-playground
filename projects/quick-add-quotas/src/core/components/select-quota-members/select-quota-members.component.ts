@@ -120,12 +120,16 @@ export class SelectQuotaMembersComponent implements ControlValueAccessor {
       this.form.controls['selected'].setValue(this.selectedCount === this.totalCount, { emitEvent: false });
     });
 
-    this.form.controls['selected'].valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+    this.form.controls['selected'].valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: number | string | boolean) => {
+      if (typeof value !== 'boolean') return;
+
       this.items.forEach((i) => i.selected = value);
       this.notifyChanges();
     });
 
-    this.form.controls['limit'].valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+    this.form.controls['limit'].valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: string | number | null | undefined) => {
+      if (!(typeof value === 'number' && value >= 0)) return;
+
       this.items.forEach((i) => i.limit = value);
       this.notifyChanges();
     });
