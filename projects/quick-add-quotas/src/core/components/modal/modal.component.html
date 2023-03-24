@@ -91,7 +91,7 @@
       <div class="d-grid-2 mb-2">
         <span [innerText]="'Action to perform' | limeTranslate"></span>
 
-        <ng-select class="flex-grow-1" [formControlName]="'actionToPerform'">
+        <ng-select class="flex-grow-1" [dropdownPosition]="'bottom'" [clearable]="false" [formControlName]="'actionToPerform'">
           <ng-option [value]="0">{{'Show message' | limeTranslate}}</ng-option>
           <ng-option [value]="1">{{'Link redirect' | limeTranslate}}</ng-option>
           <ng-option [value]="2">{{'Show message and link redirect' | limeTranslate}}</ng-option>
