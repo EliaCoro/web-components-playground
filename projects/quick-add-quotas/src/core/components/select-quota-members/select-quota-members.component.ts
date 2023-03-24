@@ -229,7 +229,7 @@ export class SelectQuotaMembersComponent implements ControlValueAccessor {
       }
     });
 
-    this.items = savedQuotas && savedQuotas.length > 0 ? this.setQuotaLimitsBySaved(savedQuotas, answerOptions) : answerOptions;
+    this.items = this.setQuotaLimitsBySaved(savedQuotas, answerOptions);
     this.notifyChanges();
   }
 
@@ -272,7 +272,9 @@ export class SelectQuotaMembersComponent implements ControlValueAccessor {
    * @returns PartialQuotas with selected and limit set
    */
   private setQuotaLimitsBySaved(quotas: Quota[], items: PartialQuota[]): PartialQuota[] {
-    return items.map((i: PartialQuota) => {
+    if (!(quotas && Array.isArray(quotas) && items && Array.isArray(items) && quotas.length > 0)) return items;
+
+    items = items.map((i: PartialQuota) => {
       const match = quotas.find((q: Quota) => this.areEqual(q, i));
 
       i.selected = match ? true : false;
@@ -283,6 +285,11 @@ export class SelectQuotaMembersComponent implements ControlValueAccessor {
 
       return i;
     });
+
+    // If none selected, select all
+    if (items.filter((i: PartialQuota) => i.selected).length === 0) return items.map((i: PartialQuota) => ({ ...i, selected: true }));
+
+    return items;
   }
 
   /**
