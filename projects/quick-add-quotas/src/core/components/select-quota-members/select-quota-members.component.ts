@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, forwardRef } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren, forwardRef } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
 import { AutoDestroy } from '@lib/auto-destroy';
 import { Subject } from 'rxjs';
@@ -53,6 +53,10 @@ export interface QuotaSettings {
   ]
 })
 export class SelectQuotaMembersComponent implements ControlValueAccessor {
+
+  @ViewChild('numberInput') numberInput?: ElementRef<HTMLInputElement>;
+
+  @Input() autofocus: boolean = true;
 
   @AutoDestroy destroy$: Subject<void> = new Subject<void>();
 
@@ -145,8 +149,18 @@ export class SelectQuotaMembersComponent implements ControlValueAccessor {
   }
 
   ngAfterViewInit(): void {
-    // Make sure parent component has data even if user doesn't change anything
     this.notifyChanges();
+
+    this.autofocus && this.focus();
+  }
+
+  focus(): void {
+    const input: undefined | HTMLInputElement = this.numberInput?.nativeElement;
+
+    if (!input) return;
+
+    input.focus();
+    input.select();
   }
 
   selectedChange(selected: boolean, index: number): void {
