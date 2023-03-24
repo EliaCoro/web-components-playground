@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnInit, forwardRef } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, QueryList, ViewChildren, forwardRef } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { QuickAddQuotasService } from '../../services/quick-add-quotas.service';
 import { Translation } from '@lib/translation';
 import { Subject, Subscription, merge } from 'rxjs';
 import { AutoDestroy } from '@lib/auto-destroy';
-import { take, takeUntil } from 'rxjs/operators';
+import { debounceTime, take, takeUntil, tap } from 'rxjs/operators';
 import { QuestionsAndSubquestionsData } from '@lib/questions-and-subquestions-data';
 import { ActionToPerform, defaultActionToPerform } from '@lib/action-to-perform';
 
@@ -35,6 +35,10 @@ declare interface TranslationControl {
 })
 export class TranslationsInputComponent implements OnInit, ControlValueAccessor {
 
+  @ViewChildren("focusableInput") inputs?: QueryList<ElementRef<HTMLInputElement | HTMLTextAreaElement>>;
+
+  @Input() autofocus: boolean = true;
+
   writing: boolean = false;
 
   translations: TranslationControl[] = [];
@@ -63,8 +67,6 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     return this._actionToPerform ?? defaultActionToPerform;
   }
 
-  private controlValueChangesUpdate?: Subscription;
-
   constructor(
     private readonly service: QuickAddQuotasService
   ) { }
@@ -74,7 +76,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
     if (obj.length == 0) return;
 
-    this.translations = obj.map((t: Translation) => {
+    const translations = obj.map((t: Translation) => {
       return {
         lang: t.lang,
         message: this.newMessageControl(t.message),
@@ -84,6 +86,8 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
         language_name: t.language_name
       };
     });
+
+    this.translationsChange(translations, false);
   }
 
   showErrors(item: TranslationControl, field: 'urlDescription' | 'url' | 'message'): boolean {
@@ -123,6 +127,18 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
   ngAfterViewInit(): void {
     this.calcAnythingInvalid();
+    this.autofocus && this.focusFirstInput();
+  }
+
+  @Input() private filterInputs = (input: HTMLInputElement | HTMLTextAreaElement) => {
+    return !input.disabled;
+  }
+
+  focusFirstInput(): void {
+    if (!this.inputs) return;
+
+    const input: undefined | HTMLInputElement | HTMLTextAreaElement = this.inputs.map(l => l.nativeElement).filter(this.filterInputs ?? (() => true))[0];
+    input?.focus();
   }
 
   /**
@@ -191,14 +207,33 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
     this.translationsChange(trans);
 
+    // This is useful to emit changes even if the user doesn't change anything.
+    // In this way parent component has this data even if empty.
+    setTimeout(() => { this.notifyChange(); });
+  };
+
+  translationsChange(translations: TranslationControl[], notifyChanges: boolean = true): void {
+    this.translations = translations;
+
+    notifyChanges && this.notifyChange();
+
+    this.startListeningChanges();
+  }
+
+  // Resetting onDestroy
+  private controlValueChangesUpdate?: Subscription;
+  private startListeningChanges(): void {
+    const controls: FormControl[] = this.translations.map(t => [t.message, t.url, t.urlDescription]).reduce((a, b) => a.concat(b), []);
+    const urlControls: FormControl[] = this.translations.map(t => t.url);
+
     this.controlValueChangesUpdate?.unsubscribe();
-    this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
-      () => {
-        this.notifyChange();
-        this.stillWriting();
-        this.calcAnythingInvalid();
-      }
-    );
+    this.controlValueChangesUpdate = merge(...controls.map(c => c.valueChanges)).pipe(
+      takeUntil(this.destroy$),
+      // Need to do this two operations without debounceTime because otherwise the value is not updated
+      tap(() => this.stillWriting()),
+      tap(() => this.calcAnythingInvalid()),
+      debounceTime(500)
+    ).subscribe(() => this.notifyChange());
 
     // When user sets first link, all other links are set to the same value if they are empty and untouched
     if (urlControls && Array.isArray(urlControls) && urlControls.length > 1) {
@@ -210,15 +245,6 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
         });
       });
     }
-
-    // This is useful to emit changes even if the user doesn't change anything.
-    // In this way parent component has this data even if empty.
-    setTimeout(() => { this.notifyChange(); });
-  };
-
-  translationsChange(translations: TranslationControl[]): void {
-    this.translations = translations;
-    this.notifyChange();
   }
 
   showUrl(control: FormControl): boolean {
