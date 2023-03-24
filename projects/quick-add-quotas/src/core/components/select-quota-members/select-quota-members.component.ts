@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges, forwardRef } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
 import { AutoDestroy } from '@lib/auto-destroy';
 import { Subject } from 'rxjs';
 import { QuickAddQuotasService } from '../../services/quick-add-quotas.service';
@@ -10,6 +10,10 @@ import { Quota } from '@lib/quota';
 import { QuotaAction } from '@lib/quota-action';
 import { QuotaMember } from '@lib/quota-member';
 import { QuotaType } from '@lib/quota-type';
+import { CustomValidators } from '@lib/custom-validators';
+
+// Loadash must be loaded in the app
+var _: any;
 
 export interface ExportQuota {
   members: QuotaMember[];
@@ -48,11 +52,24 @@ export interface QuotaSettings {
     }
   ]
 })
-export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor {
+export class SelectQuotaMembersComponent implements ControlValueAccessor {
 
   @AutoDestroy destroy$: Subject<void> = new Subject<void>();
 
   private readonly notifyChange$ = new Subject<ExportQuota[]>();
+
+  private readonly defaultQuotaName: string = `QQuota
+    [
+      <% _.forEach(answers, function(answer) { %>
+        <%- answer.code %> - (<%- answer.answer %>)
+      <% }); %>
+    ]
+  `;
+
+  readonly quotaName: FormControl = new FormControl(this.defaultQuotaName, [
+    CustomValidators.required,
+    CustomValidators.minLength(5)
+  ]);
 
   // TODO notify this on input touch
   readonly touched$: Subject<void> = new Subject<void>();
@@ -86,9 +103,11 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
 
   items: PartialQuota[] = [];
 
-  constructor(
-    // private readonly service: QuickAddQuotasService
-  ) {
+  constructor() {
+    this.quotaName.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+      this.notifyChanges();
+    });
+
     this.notifyChange$.pipe(takeUntil(this.destroy$)).subscribe((quotas) => {
       this.touched$.next();
 
@@ -125,8 +144,6 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
     this.form[isDisabled ? 'disable' : 'enable']();
   }
 
-  ngOnInit(): void {}
-
   ngAfterViewInit(): void {
     // Make sure parent component has data even if user doesn't change anything
     this.notifyChanges();
@@ -156,7 +173,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
     this.notifyChange$.next(this.formatOutput());
   }
 
-  private formatOutput(): ExportQuota[]{
+  private formatOutput(): ExportQuota[] {
     const settings = this.defaultSettings;
 
     return this.items.filter((item: PartialQuota) => item.selected).map((item: PartialQuota) => {
@@ -187,7 +204,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
       if (index == 0) {
         q.answers.forEach((a: Answer) => {
           answerOptions.push({
-            answers: [{...a, question: q.question}],
+            answers: [{ ...a, question: q.question }],
             selected: true,
             title: this.title(q, a),
             limit: 0,
@@ -199,7 +216,7 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
           q.answers!.forEach((a: Answer) => {
             newAnswerOptions.push({
               answers: [
-                ...ao.answers, {...a, question: q.question}
+                ...ao.answers, { ...a, question: q.question }
               ],
               selected: true,
               title: this.title(q, a),
@@ -217,8 +234,31 @@ export class SelectQuotaMembersComponent implements OnInit, ControlValueAccessor
   }
 
   private genName(quota: PartialQuota): string {
-    return `TODO - ${quota.answers.length}`;
-    // return quota.answers.map((a) => a.name).join(' - ');
+    return this.genNameWithLoadash(quota) || this.genNameWithTemplate(quota);
+  }
+
+  readonly removeNewLines = (str: string) => str.replace(/(\r\n|\n|\r)/gm, '');
+
+  readonly removeDoubleSpaces = (str: string) => str.replace(/\s{2,}/g, ' ');
+
+  readonly parseTemplate = (str: string) => this.removeDoubleSpaces(this.removeNewLines(str)).trim();
+
+  private genNameWithLoadash(quota: PartialQuota): string | null {
+    if (!_ && (window as any)['_']) var _ = (window as any)['_'];
+
+    // Check if _ is defined, otherwise throw error
+    if (!_) {
+      console.error('lodash is not defined. Please include lodash in your project.');
+      return null;
+    }
+
+    const string: string = this.parseTemplate(this.quotaName.valid && this.quotaName.value ? this.quotaName.value : this.defaultQuotaName);
+
+    return _.template(string)(quota);
+  }
+
+  private genNameWithTemplate(quota: PartialQuota): string {
+    return quota.answers.map((a: Answer) => `${a.code} - ${a.answer}`).join(' | ');
   }
 
   private title(q: Question, a: Answer): string {
