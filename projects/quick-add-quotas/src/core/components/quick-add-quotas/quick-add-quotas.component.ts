@@ -38,6 +38,14 @@ export class QuickAddQuotasComponent {
     service.settingsChange$.pipe(takeUntil(this.destroy$)).subscribe((settings?: QaqSettings) => {
       this.setSettings(settings, false);
     });
+
+    // Since this is the root component, once this is destroyed, we want to destroy the service.
+    this.destroy$.subscribe({
+      complete: () => {
+        this.service.destroy$.next();
+        this.service.destroy$.complete();
+      }
+    });
   }
 
   showModal(): void {
