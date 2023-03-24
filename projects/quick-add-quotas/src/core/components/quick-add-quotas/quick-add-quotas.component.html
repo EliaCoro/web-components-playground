@@ -1,10 +1,7 @@
 <button (click)="showModal()" class="btn btn-default">
-  <ng-content></ng-content>
-  {{ 'Quick Add Quotas' | limeTranslate }}
+  {{'Quick Add Quotas' | limeTranslate }}
 </button>
 
 <lib-modal (onSubmit$)="saveQuotas($event)" *ngIf="showingModal" (close)="hideModal()"></lib-modal>
 
 <lib-style></lib-style>
-
-<!-- <pre [innerText]="{ settings } | json" ></pre> -->
