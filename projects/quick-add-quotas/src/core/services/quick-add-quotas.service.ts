@@ -4,11 +4,14 @@ import { Injectable } from '@angular/core';
 import { ActionToPerform } from '@lib/action-to-perform';
 import { Answer } from '@lib/answer';
 import { FinalFormattedData } from '@lib/final-formatted-data';
+import { limeTranslate } from '@lib/lime-translate';
 import { QaqSettings } from '@lib/qaq-settings';
 import { Question } from '@lib/question';
 import { QuestionsAndSubquestionsData } from '@lib/questions-and-subquestions-data';
 import { QuotaAction } from '@lib/quota-action';
 import { QuotaType } from '@lib/quota-type';
+import { text2key } from '@lib/text2key';
+import { NgSelectConfig } from '@ng-select/ng-select';
 import { BehaviorSubject, Observable, Subject, Subscription, merge, of } from 'rxjs';
 import { catchError, concatAll, map, takeUntil, tap } from 'rxjs/operators';
 
@@ -39,17 +42,26 @@ export class QuickAddQuotasService {
 
   readonly errorMessages$: BehaviorSubject<Record<string, string>> = new BehaviorSubject<Record<string, string>>({});
 
-  private readonly destroy$: Subject<void> = new Subject<void>();
+  readonly translations$: BehaviorSubject<Record<string, string>> = new BehaviorSubject<Record<string, string>>({});
+  private translations?: Record<string, string>;
+
+  readonly destroy$: Subject<void> = new Subject<void>();
 
   constructor(
-    private readonly http: HttpClient
+    private readonly http: HttpClient,
+    private readonly ngSelectConfig: NgSelectConfig
   ) {
+    this.translations$.pipe(takeUntil(this.destroy$)).subscribe(translations => this.translations = translations)
+
     this.settingsChange$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
       this.errorMessages$.next(settings?.errormessages ?? {});
+
+      this.updateTranslationsBySettings(settings);
+      this.updateNgSelectTranslationsBySettings(settings);
     });
   }
 
-  loadInitialData(sid: number | undefined = this.settings?.surveyid , token: string | undefined = this.settings?.yiicsrftoken): Observable<QuestionsAndSubquestionsData> {
+  loadInitialData(sid: number | undefined = this.settings?.surveyid, token: string | undefined = this.settings?.yiicsrftoken): Observable<QuestionsAndSubquestionsData> {
     if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
 
     const urlTemplate = '/index.php/surveyAdministration/quickAddQuotasInfo/surveyid/{{sid}}?YII_CSRF_TOKEN={{token}}';
@@ -62,10 +74,10 @@ export class QuickAddQuotasService {
   }
 
   private tryLoadInitialDataTimeout: any;
-  tryLoadInitialData(sid: number | undefined = this.settings?.surveyid , token: string | undefined = this.settings?.yiicsrftoken): void {
+  tryLoadInitialData(sid: number | undefined = this.settings?.surveyid, token: string | undefined = this.settings?.yiicsrftoken): void {
     const exec = () => {
       if (!(sid && token)) return of(undefined);
-  
+
       return this.loadInitialData(sid, token).pipe(
         catchError(err => {
           console.error(err);
@@ -83,22 +95,22 @@ export class QuickAddQuotasService {
     data: FinalFormattedData[],
     sid: number | undefined = this.settings?.surveyid,
     token: string | undefined = this.settings?.yiicsrftoken
-    ): Observable<any> {
-      if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
+  ): Observable<any> {
+    if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
 
-      const urlTemplate = '/index.php/surveyAdministration/quickAddQuotas/surveyid/{{sid}}';
-  
-      const url = urlTemplate.replace("{{sid}}", sid.toString());
-  
-      const body = new URLSearchParams();
-      body.set('YII_CSRF_TOKEN', token);
-      body.set('payload', JSON.stringify(data));
+    const urlTemplate = '/index.php/surveyAdministration/quickAddQuotas/surveyid/{{sid}}';
 
-      const options = {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      };
+    const url = urlTemplate.replace("{{sid}}", sid.toString());
 
-      return this.http.post<any>(url, body.toString(), options);
+    const body = new URLSearchParams();
+    body.set('YII_CSRF_TOKEN', token);
+    body.set('payload', JSON.stringify(data));
+
+    const options = {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    };
+
+    return this.http.post<any>(url, body.toString(), options);
   }
 
   setSettings(settings: QaqSettings | undefined): void {
@@ -113,5 +125,29 @@ export class QuickAddQuotasService {
 
   private getValidQuestions(questions: Question[]): Question[] {
     return questions.filter(question => SUPPORTED_QUESTION_TYPES.includes(question.type));
+  }
+
+  private updateTranslationsBySettings(settings: QaqSettings | undefined): void {
+    const newTranslations: Record<string, string> = {};
+    const translations: Record<string, string> = settings?.translations ?? {};
+
+    Object.keys(translations).forEach(key => {
+      if (translations[key] === "") delete translations[key];
+
+      translations[text2key(key)] = translations[key];
+    });
+
+    this.translations$.next(translations);
+  }
+
+  private updateNgSelectTranslationsBySettings(settings: QaqSettings | undefined): void {
+    const t = this.translations ?? {};
+
+    this.ngSelectConfig.clearAllText     = limeTranslate(`Clear`, t);
+    this.ngSelectConfig.notFoundText     = limeTranslate(`Not found`, t);
+    this.ngSelectConfig.typeToSearchText = limeTranslate(`Type to search`, t);
+    this.ngSelectConfig.addTagText       = limeTranslate(`Add`, t);
+    this.ngSelectConfig.loadingText      = limeTranslate(`Loading...`, t);
+    this.ngSelectConfig.placeholder      = limeTranslate(`Select`, t);
   }
 }
