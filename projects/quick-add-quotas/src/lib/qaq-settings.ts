@@ -3,6 +3,7 @@ export interface QaqSettings {
   yiicsrftoken?: string;
   surveyid?: number;
   errormessages?: Record<string, string>;
+  lang?: string;
   // [key: string]: any;
 };
 

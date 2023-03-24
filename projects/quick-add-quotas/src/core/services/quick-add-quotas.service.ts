@@ -64,9 +64,9 @@ export class QuickAddQuotasService {
   loadInitialData(sid: number | undefined = this.settings?.surveyid, token: string | undefined = this.settings?.yiicsrftoken): Observable<QuestionsAndSubquestionsData> {
     if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
 
-    const urlTemplate = '/index.php/surveyAdministration/quickAddQuotasInfo/surveyid/{{sid}}?YII_CSRF_TOKEN={{token}}';
+    const urlTemplate = '/index.php/surveyAdministration/quickAddQuotasInfo/surveyid/{{sid}}?YII_CSRF_TOKEN={{token}}&lang={{lang}}';
 
-    const url = urlTemplate.replace("{{sid}}", sid.toString()).replace("{{token}}", token);
+    const url = urlTemplate.replace("{{sid}}", sid.toString()).replace("{{token}}", token).replace("{{lang}}", this.settings?.lang ?? "en");
 
     return this.http.get<QuestionsAndSubquestionsData>(url).pipe(
       tap(data => this.setData(data))
