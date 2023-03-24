@@ -40,9 +40,8 @@
         <span class="count">1.</span>
         <span [innerText]="'Select questions' | limeTranslate"></span>
       </span>
-
       <lib-add-questions [formControlName]="'questions'"></lib-add-questions>
-      <!-- <hr> -->
+      <lib-show-errors [errors]="form.get('questions')?.errors ?? null" ></lib-show-errors>
 
       <span class="title">
         <span class="count">2.</span>
@@ -52,8 +51,8 @@
       <div class="select-grid">
         <span [innerText]="'Quota action' | limeTranslate"></span>
         <ng-select [dropdownPosition]="'top'" [clearable]="false" [formControlName]="'quotaAction'">
-          <ng-option [value]="0" [innerText]="'Terminate survey' | limeTranslate"></ng-option>
-          <ng-option [value]="1"
+          <ng-option [value]="1" [innerText]="'Terminate survey' | limeTranslate"></ng-option>
+          <ng-option [value]="2"
             [innerText]="'Allow user to modify his last answers before terminate survey' | limeTranslate"></ng-option>
         </ng-select>
 
@@ -67,6 +66,8 @@
         </ng-container>
       </div>
 
+      <lib-show-errors [errors]="form.get('quotaAction')?.errors ?? null" ></lib-show-errors>
+      <lib-show-errors [errors]="form.get('quotaType')?.errors ?? null" ></lib-show-errors>
     </div>
 
     <div class="flex-grow-1 overflow-y-hidden d-flex-column" *ngIf="currentIndex == 2">
@@ -77,6 +78,8 @@
 
       <lib-select-quota-members [formControlName]="'quotas'" [questions]="selectedQuestions">
       </lib-select-quota-members>
+
+      <lib-show-errors [errors]="form.get('quotas')?.errors ?? null" ></lib-show-errors>
     </div>
 
     <div class="flex-grow-1 overflow-y-hidden d-flex-column" *ngIf="currentIndex == 3">
@@ -95,8 +98,12 @@
         </ng-select>
       </div>
 
+      <lib-show-errors [errors]="form.get('actionToPerform')?.errors ?? null" ></lib-show-errors>
+
       <lib-translations-input class="d-flex flex-column overflow-hidden" [actionToPerform]="form.value.actionToPerform" [formControlName]="'translations'">
       </lib-translations-input>
+
+      <lib-show-errors [errors]="form.get('translations')?.errors ?? null" ></lib-show-errors>
     </div>
 
     <ng-container *ngTemplateOutlet="buttonsRow"></ng-container>

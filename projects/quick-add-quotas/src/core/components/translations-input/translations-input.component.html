@@ -13,6 +13,8 @@
         </label>
         <input type="text" id="autoload_url_{{index}}" placeholder="https://example.com" class="form-control"
           [ngClass]="item.url.valid ? 'is-valid' : 'is-invalid'" [formControl]="item.url">
+
+          <lib-show-errors [visible]="showErrors(item, 'url')" [errors]="item.url.errors ?? null" ></lib-show-errors>
       </div>
 
       <div class="mt-3 px-2 pb-2 d-flex flex-column" *ngIf="showDescription(item.urlDescription)">
@@ -21,6 +23,8 @@
         <input [placeholder]="'This link will be used for ...' | limeTranslate" id="url_description_{{index}}"
           type="text" class="form-control" [ngClass]="item.urlDescription.valid ? 'is-valid' : 'is-invalid'"
           [formControl]="item.urlDescription">
+
+          <lib-show-errors [visible]="showErrors(item, 'urlDescription')" [errors]="item.urlDescription.errors ?? null" ></lib-show-errors>
       </div>
 
       <div class="mt-3 px-2 pb-2 d-flex flex-column" *ngIf="showMessage(item.message)">
@@ -28,6 +32,8 @@
         </label>
         <textarea [placeholder]="item.defaultMessage" type="text" id="message_{{index}}" class="form-control"
           [ngClass]="item.message.valid ? 'is-valid' : 'is-invalid'" rows="3" [formControl]="item.message"></textarea>
+
+          <lib-show-errors [visible]="showErrors(item, 'message')" [errors]="item.message.errors ?? null" ></lib-show-errors>
       </div>
     </div>
   </div>

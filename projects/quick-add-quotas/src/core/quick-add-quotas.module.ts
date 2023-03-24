@@ -10,6 +10,7 @@ import { StyleComponent } from './components/style/style.component';
 import { AddQuestionsComponent } from './components/add-questions/add-questions.component';
 import { SelectQuotaMembersComponent } from './components/select-quota-members/select-quota-members.component';
 import { TranslationsInputComponent } from './components/translations-input/translations-input.component';
+import { ShowErrorsComponent } from './components/show-errors/show-errors.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { TranslationsInputComponent } from './components/translations-input/tran
     AddQuestionsComponent,
     SelectQuotaMembersComponent,
     TranslationsInputComponent,
+    ShowErrorsComponent,
   ],
   imports: [
     CommonModule,

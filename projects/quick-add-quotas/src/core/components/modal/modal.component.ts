@@ -30,7 +30,9 @@ const quotaValidator = (control: AbstractControl): ValidationErrors | null => {
   const quota: Quota | undefined = control.value;
   if (!(quota instanceof Object)) return { invalid: true };
 
-  if ((quota.limit == undefined || quota.limit == null || typeof quota.limit != "number") && quota.limit != 0) return { invalid: true, spec: 'limit' };
+  const limit: number | undefined | string | null = quota.limit;
+
+  if (!(limit != undefined && limit != null && typeof limit == 'number' && limit > -1)) return { invalid2: { field: 'limit' } };
 
   return null;
 };
@@ -56,6 +58,8 @@ export class ModalComponent {
 
   currentIndex: 1 | 2 | 3 = 1;
 
+  canSubmit: boolean = false;
+
   get isLastStep(): boolean {
     return this.currentIndex == 3;
   }
@@ -72,15 +76,15 @@ export class ModalComponent {
       CustomValidators.arrayMinLength(1)
     ]),
 
+    quotaAction: new FormControl(QuotaAction.Terminate, [
+      CustomValidators.required,
+      CustomValidators.inclusion(QuotaActions)
+    ]),
+
     quotas: new FormControl([], [
       CustomValidators.required,
       CustomValidators.arrayMinLength(1),
       CustomValidators.validateArray(quotaValidator)
-    ]),
-
-    quotaAction: new FormControl(QuotaAction.Terminate, [
-      CustomValidators.required,
-      CustomValidators.inclusion(QuotaActions)
     ]),
 
     ...(INCLUDE_QUOTA_TYPE ?
@@ -90,13 +94,6 @@ export class ModalComponent {
           CustomValidators.inclusion(QuotaTypes)
         ]),
       } : {}),
-
-    // ...{
-    //   quotaType: new FormControl(QuotaType.Quota, [
-    //     CustomValidators.required,
-    //     CustomValidators.inclusion(QuotaTypes)
-    //   ]),
-    // },
 
     actionToPerform: new FormControl(ActionToPerform.Redirect, [
       CustomValidators.required,
@@ -117,6 +114,10 @@ export class ModalComponent {
     this.form.get('questions')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.selectedQuestions = this.form.get('questions')?.value;
     });
+
+    this.form.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.updateCanSubmit();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -127,12 +128,39 @@ export class ModalComponent {
     this.onSubmit$.emit(this.parseData());
   }
 
+  updateCanSubmit(): void {
+    this.canSubmit = this.calcCanSubmit();
+  }
+
+  private calcCanSubmit(): boolean {
+    const questions: FormControl = this.form.get('questions') as FormControl;
+    const quotas: FormControl = this.form.get('quotas') as FormControl;
+    const quotaAction: FormControl = this.form.get('quotaAction') as FormControl;
+    const translations: FormControl = this.form.get('translations') as FormControl;
+    const actionToPerform: FormControl = this.form.get('actionToPerform') as FormControl;
+
+    switch (this.currentIndex) {
+      case 1:
+        return questions.valid && quotaAction.valid;
+      case 2:
+        return quotas.valid;
+      case 3:
+        return translations.valid && actionToPerform.valid;
+      default:
+        return false;
+    }
+  }
+
   increaseIndex(): void {
+    if (!(this.canSubmit)) return;
+
     if (this.isLastStep) return this.submit();
 
     this.currentIndex++;
 
     this.fixIndexIfInvalid();
+
+    this.updateCanSubmit();
   }
 
   decreaseIndex(): void {

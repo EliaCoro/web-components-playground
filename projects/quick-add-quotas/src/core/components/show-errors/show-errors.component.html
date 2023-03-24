@@ -1,0 +1,7 @@
+<ng-container *ngFor="let msg of strs">
+  <p class="error" [innerText]="msg"></p>
+</ng-container>
+
+<ng-container *ngFor="let temp of templates">
+  <ng-container *ngTemplateOutlet="temp"></ng-container>
+</ng-container>

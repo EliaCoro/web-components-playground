@@ -35,6 +35,8 @@ declare interface TranslationControl {
 })
 export class TranslationsInputComponent implements OnInit, ControlValueAccessor {
 
+  writing: boolean = false;
+
   translations: TranslationControl[] = [];
   private readonly translationsChange$: Subject<Translation[]> = new Subject<Translation[]>();
 
@@ -84,6 +86,13 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     });
   }
 
+  showErrors(item: TranslationControl, field: 'urlDescription' | 'url' | 'message'): boolean {
+    if (this.writing) return false;
+
+    const control: FormControl = item[field];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
   registerOnChange(fn: any): void {
     this.translationsChange$.pipe(takeUntil(this.destroy$)).subscribe(fn);
   }
@@ -114,6 +123,19 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
 
   ngAfterViewInit(): void {
     this.calcAnythingInvalid();
+  }
+
+  /**
+   * Function to call on each keypress
+   */
+  private writingTimeout?: any;
+  private stillWriting(): void {
+    this.writing = true;
+    clearTimeout(this.writingTimeout);
+
+    this.writingTimeout = setTimeout(() => {
+      this.writing = false;
+    }, 1000);
   }
 
   private readonly newMessageControl = (v: any = null) => new FormControl(v, Validators.required);
@@ -173,6 +195,7 @@ export class TranslationsInputComponent implements OnInit, ControlValueAccessor 
     this.controlValueChangesUpdate = merge(...controls.map((c) => c.valueChanges)).pipe(takeUntil(this.destroy$)).subscribe(
       () => {
         this.notifyChange();
+        this.stillWriting();
         this.calcAnythingInvalid();
       }
     );

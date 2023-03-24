@@ -9,8 +9,8 @@ import { Question } from '@lib/question';
 import { QuestionsAndSubquestionsData } from '@lib/questions-and-subquestions-data';
 import { QuotaAction } from '@lib/quota-action';
 import { QuotaType } from '@lib/quota-type';
-import { Observable, Subject, Subscription, merge, of } from 'rxjs';
-import { catchError, concatAll, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, Subscription, merge, of } from 'rxjs';
+import { catchError, concatAll, map, takeUntil, tap } from 'rxjs/operators';
 
 const SUPPORTED_QUESTION_TYPES: string[] = ["L"];
 
@@ -37,18 +37,18 @@ export class QuickAddQuotasService {
     tap(questions => this.questions = questions)
   );
 
+  readonly errorMessages$: BehaviorSubject<Record<string, string>> = new BehaviorSubject<Record<string, string>>({});
+
+  private readonly destroy$: Subject<void> = new Subject<void>();
+
   constructor(
     private readonly http: HttpClient
   ) {
-
-    // this.settingsChange$.subscribe(settings => {
-    //   if (!settings || this.data) return;
-
-    //   this.tryLoadInitialData(settings.surveyid, settings.yiicsrftoken);
-    // });
+    this.settingsChange$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
+      this.errorMessages$.next(settings?.errormessages ?? {});
+    });
   }
 
-  
   loadInitialData(sid: number | undefined = this.settings?.surveyid , token: string | undefined = this.settings?.yiicsrftoken): Observable<QuestionsAndSubquestionsData> {
     if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
 

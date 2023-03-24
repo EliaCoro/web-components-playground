@@ -16,6 +16,12 @@ const validatePhoneIT = (value: string): boolean => {
 
 export class CustomValidators extends Validators {
 
+  static override required(control: AbstractControl): ValidationErrors | null {
+    if (hasValue(control.value)) return null;
+
+    return { 'required': true };
+  }
+
   static mustBeArray(control: AbstractControl | FormControl): ValidationErrors | null {
     if (!Array.isArray(control.value)) {
       return { 'mustBeArray': true };
@@ -28,7 +34,7 @@ export class CustomValidators extends Validators {
     return (control: AbstractControl | FormControl) => {
       if (!Array.isArray(control.value)) return null;
       if (control.value.length < minLength) {
-        return { 'arrayMinLength': true };
+        return { arrayMinLength: {requiredLength: minLength, actualLength: control.value.length} };
       }
       
       return null;
@@ -37,10 +43,14 @@ export class CustomValidators extends Validators {
 
   static validateArray(validator: (c: AbstractControl | FormControl) => ValidationErrors | null): (c: AbstractControl | FormControl) => ValidationErrors | null {
     return (control: AbstractControl | FormControl) => {
-      if (!Array.isArray(control.value)) return null;
+      const value = control.value;
+      if (!Array.isArray(value)) return null;
+
       const errors: ValidationErrors = {};
-      for (const item of control.value) {
-        const result = validator(new FormControl(item));
+      for (const item of value) {
+        const newControl = new FormControl(item, [validator]);
+        newControl.updateValueAndValidity();
+        const result = newControl.errors;
         if (result) {
           Object.assign(errors, result);
         }
