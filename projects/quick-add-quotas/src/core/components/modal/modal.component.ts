@@ -169,6 +169,8 @@ export class ModalComponent {
     this.currentIndex--;
 
     this.fixIndexIfInvalid();
+
+    this.updateCanSubmit();
   }
 
   cancel(): void {
