@@ -4,7 +4,7 @@
       <h4 [innerText]="item.language_name" class="text-underline m-0"></h4>
 
       <i class="fa fa-fw fa-exclamation-triangle text-danger ms-2"
-        [ngStyle]="{'display': item.anythingInvalid === true ? 'inline-block' : 'none'}"></i>
+        [ngStyle]="{'display': item.anythingInvalid === true && !writing ? 'inline-block' : 'none'}"></i>
     </div>
 
     <div class="d-flex flex-column">
@@ -12,7 +12,7 @@
         <label class="p-0 control-label col-sm-2 w-100" for="autoload_url_{{index}}"> {{'Autoload URL' | limeTranslate}}
         </label>
         <input #focusableInput type="text" id="autoload_url_{{index}}" placeholder="https://example.com" class="form-control"
-          [ngClass]="item.url.valid ? 'is-valid' : 'is-invalid'" [formControl]="item.url">
+          [ngClass]="item.url.invalid && showErrors(item, 'url') ? 'is-invalid' : ''" [formControl]="item.url">
 
           <lib-show-errors [visible]="showErrors(item, 'url')" [errors]="item.url.errors ?? null" ></lib-show-errors>
       </div>
@@ -21,7 +21,7 @@
         <label class="p-0 control-label col-sm-2 w-100" for="url_description_{{index}}">
           {{'URL description' | limeTranslate}} </label>
         <input #focusableInput [placeholder]="'This link will be used for ...' | limeTranslate" id="url_description_{{index}}"
-          type="text" class="form-control" [ngClass]="item.urlDescription.valid ? 'is-valid' : 'is-invalid'"
+          type="text" class="form-control" [ngClass]="item.urlDescription.invalid && showErrors(item, 'urlDescription') ? 'is-invalid' : ''"
           [formControl]="item.urlDescription">
 
           <lib-show-errors [visible]="showErrors(item, 'urlDescription')" [errors]="item.urlDescription.errors ?? null" ></lib-show-errors>
@@ -31,7 +31,7 @@
         <label class="p-0 control-label col-sm-2 w-100" for="message_{{index}}"> {{'Quota message' | limeTranslate}}
         </label>
         <textarea #focusableInput [placeholder]="item.defaultMessage" type="text" id="message_{{index}}" class="form-control"
-          [ngClass]="item.message.valid ? 'is-valid' : 'is-invalid'" rows="3" [formControl]="item.message"></textarea>
+          [ngClass]="item.message.invalid && showErrors(item, 'message') ? 'is-invalid' : ''" rows="3" [formControl]="item.message"></textarea>
 
           <lib-show-errors [visible]="showErrors(item, 'message')" [errors]="item.message.errors ?? null" ></lib-show-errors>
       </div>
