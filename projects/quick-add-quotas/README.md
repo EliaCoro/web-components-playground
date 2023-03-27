@@ -1,3 +1,2 @@
 # QuickAddQuotas
-TODO
-- bottone non si vede se non si ricarica la pagina (a volte)
+Libreria per aggiunta rapide di quote per LimeSurvey5.
