@@ -61,24 +61,26 @@ export class QuickAddQuotasService {
     });
   }
 
-  loadInitialData(sid: number | undefined = this.settings?.surveyid, token: string | undefined = this.settings?.yiicsrftoken): Observable<QuestionsAndSubquestionsData> {
-    if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
+  loadInitialData(url: string | undefined = this.settings?.load_data_url, token: string | undefined = this.settings?.yiicsrftoken): Observable<QuestionsAndSubquestionsData> {
+    if (!(url && token)) throw new Error(`url and token must be defined. url: ${url}, token: ${token}`);
 
-    const urlTemplate = '/index.php/surveyAdministration/quickAddQuotasInfo/surveyid/{{sid}}?YII_CSRF_TOKEN={{token}}&lang={{lang}}';
+    //const urlTemplate = '/index.php/surveyAdministration/quickAddQuotasInfo/surveyid/{{sid}}?YII_CSRF_TOKEN={{token}}&lang={{lang}}';
 
-    const url = urlTemplate.replace("{{sid}}", sid.toString()).replace("{{token}}", token).replace("{{lang}}", this.settings?.lang ?? "en");
-
+    //const url = urlTemplate.replace("{{sid}}", sid.toString()).replace("{{token}}", token).replace("{{lang}}", this.settings?.lang ?? "en");
+    console.log("loadInitialData url: " + url);
     return this.http.get<QuestionsAndSubquestionsData>(url).pipe(
       tap(data => this.setData(data))
     );
   }
 
   private tryLoadInitialDataTimeout: any;
-  tryLoadInitialData(sid: number | undefined = this.settings?.surveyid, token: string | undefined = this.settings?.yiicsrftoken): void {
+  tryLoadInitialData(url: string | undefined = this.settings?.load_data_url, token: string | undefined = this.settings?.yiicsrftoken): void {
     const exec = () => {
-      if (!(sid && token)) return of(undefined);
+      console.log()
+      if (!(url && token)) return of(undefined);
+      console.log("try load initial data url: "+url);
 
-      return this.loadInitialData(sid, token).pipe(
+      return this.loadInitialData(url, token).pipe(
         catchError(err => {
           console.error(err);
           return of(undefined);
@@ -93,15 +95,16 @@ export class QuickAddQuotasService {
 
   saveQuotas(
     data: FinalFormattedData[],
-    sid: number | undefined = this.settings?.surveyid,
+    url: string | undefined = this.settings?.save_quota_surl,
     token: string | undefined = this.settings?.yiicsrftoken
   ): Observable<any> {
-    if (!(sid && token)) throw new Error(`sid and token must be defined. sid: ${sid}, token: ${token}`);
+    if (!(url && token)) throw new Error(`url and token must be defined. url: ${url}, token: ${token}`);
 
-    const urlTemplate = '/index.php/surveyAdministration/quickAddQuotas/surveyid/{{sid}}';
+    //const urlTemplate = '/index.php/surveyAdministration/quickAddQuotas/surveyid/{{sid}}';
 
-    const url = urlTemplate.replace("{{sid}}", sid.toString());
+    //const url = urlTemplate.replace("{{sid}}", sid.toString());
 
+    console.log("saveQuotas url: " + url);
     const body = new URLSearchParams();
     body.set('YII_CSRF_TOKEN', token);
     body.set('payload', JSON.stringify(data));

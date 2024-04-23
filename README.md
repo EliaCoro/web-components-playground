@@ -1,6 +1,10 @@
 # WebComponents
 
 https://blog.kalvad.com/export-your-angular-component-as-a-web-component/
+## Versions to use
+Angular CLI: 12.1.4
+Node: 12.14.0
+Package Manager: npm 6.13.4
 
 ## Create a new component
 1. `ng g library <your-component-name>`

@@ -4,18 +4,16 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 
 import { createCustomElement } from '@angular/elements';
+import { QuickAddQuotasModule } from "/home/elia/Scrivania/web-components-playground/projects/quick-add-quotas/src/core/quick-add-quotas.module";
+import { QuickAddQuotasComponent } from "/home/elia/Scrivania/web-components-playground/projects/quick-add-quotas/src/core/components/quick-add-quotas/quick-add-quotas.component";
 
-// import { YourModule } from './your.module';
-// import { YourComponent } from './your.component';
-
-// TODO use a function instead of an abstract class
 export abstract class WebComponentModule {
   constructor(injector: Injector, component: InstanceType<any>, name: string) {
     const ngElement = createCustomElement(component, {
       injector,
     });
     // change the first parameter to change the name of the HTML tag generated
-    customElements.define(`${name}`, ngElement);
+    customElements.define(name, ngElement);
   }
 
   public ngDoBootstrap(): void { }
@@ -24,17 +22,16 @@ export abstract class WebComponentModule {
 @NgModule({
   imports: [
     BrowserModule,
-    // YourModule
+    QuickAddQuotasModule
   ],
   entryComponents: [
-    // YourComponent
+    QuickAddQuotasComponent
   ]
 })
 export class AppModule extends WebComponentModule {
   constructor(
     readonly injector: Injector,
   ) {
-    // super(injector, YourComponent, 'your-component');
-    super(injector, AppModule, 'lpda-download-menu');
+    super(injector, QuickAddQuotasComponent, 'quick-add-quotas');
   }
 }
