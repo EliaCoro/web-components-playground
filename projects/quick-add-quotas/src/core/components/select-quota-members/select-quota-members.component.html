@@ -22,8 +22,8 @@
 
       <label for="selected_{{index}}" style="margin-left: 1rem; display: flex; align-items: center;">
         <ng-container *ngFor="let answ of a.answers; index as index; last as isLast">
-          <span class="underline-hover" data-placement="right" data-toggle="tooltip"
-            [attr.data-original-title]="answ.question">
+          <span class="underline-hover"
+            [attr.title]="answ.question">
             {{answ.answer}}
           </span>
 

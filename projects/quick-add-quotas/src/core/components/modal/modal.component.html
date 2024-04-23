@@ -1,7 +1,7 @@
 <ng-template #buttonsRow>
   <div style="display: flex; align-items: center; margin-top: .5rem; justify-content: space-between;">
     <button class="btn" [ngClass]="{
-      'btn-default': !isFirstStep,
+      'btn-outline-secondary': !isFirstStep,
       'visibility-hidden': isFirstStep
     }" type="button" (click)="decreaseIndex()">
       <ng-template #exitText>{{'Cancel' | limeTranslate}}</ng-template>
@@ -11,7 +11,7 @@
       </ng-container>
     </button>
 
-    <button class="btn" [ngClass]="{'btn-default': !isLastStep, 'btn-success': isLastStep}"
+    <button class="btn" [ngClass]="{'btn-outline-secondary': !isLastStep, 'btn-success': isLastStep}"
       style="margin-right: .25rem;" type="submit">
       <ng-template #submitText>{{'Confirm' | limeTranslate}}</ng-template>
 
@@ -27,7 +27,7 @@
   <div class="d-flex justify-content-between my-2">
     <h1 class="nomargin" [innerText]="'Quick Add Quotas' | limeTranslate"></h1>
 
-    <button (click)="cancel()" class="btn btn-default">
+    <button (click)="cancel()" class="btn btn-outline-secondary">
       <i class="fa fa-close"></i>
     </button>
   </div>

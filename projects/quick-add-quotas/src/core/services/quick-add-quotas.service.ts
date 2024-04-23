@@ -67,7 +67,6 @@ export class QuickAddQuotasService {
     //const urlTemplate = '/index.php/surveyAdministration/quickAddQuotasInfo/surveyid/{{sid}}?YII_CSRF_TOKEN={{token}}&lang={{lang}}';
 
     //const url = urlTemplate.replace("{{sid}}", sid.toString()).replace("{{token}}", token).replace("{{lang}}", this.settings?.lang ?? "en");
-    console.log("loadInitialData url: " + url);
     return this.http.get<QuestionsAndSubquestionsData>(url).pipe(
       tap(data => this.setData(data))
     );
@@ -76,9 +75,7 @@ export class QuickAddQuotasService {
   private tryLoadInitialDataTimeout: any;
   tryLoadInitialData(url: string | undefined = this.settings?.load_data_url, token: string | undefined = this.settings?.yiicsrftoken): void {
     const exec = () => {
-      console.log()
       if (!(url && token)) return of(undefined);
-      console.log("try load initial data url: "+url);
 
       return this.loadInitialData(url, token).pipe(
         catchError(err => {
@@ -104,7 +101,6 @@ export class QuickAddQuotasService {
 
     //const url = urlTemplate.replace("{{sid}}", sid.toString());
 
-    console.log("saveQuotas url: " + url);
     const body = new URLSearchParams();
     body.set('YII_CSRF_TOKEN', token);
     body.set('payload', JSON.stringify(data));
